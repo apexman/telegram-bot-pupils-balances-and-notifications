@@ -1,5 +1,6 @@
 package ru.apexman.botpupilsbalances.service.bot.telegramhandlers.commandhandlers
 
+import org.apache.shiro.session.Session
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod
 import org.telegram.telegrambots.meta.api.objects.Message
@@ -15,7 +16,7 @@ class CancelHandler: TelegramMessageHandler, AdminsChatHandler {
         return BotCommand("/cancel", "Get some cancel")
     }
 
-    override fun handle(update: Update): PartialBotApiMethod<Message> {
+    override fun handle(update: Update, botSession: Session?): PartialBotApiMethod<Message> {
         TODO("implement")
     }
 }

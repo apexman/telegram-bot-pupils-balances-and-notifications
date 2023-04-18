@@ -1,5 +1,6 @@
 package ru.apexman.botpupilsbalances.service.bot.telegramhandlers.commandhandlers
 
+import org.apache.shiro.session.Session
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
@@ -28,7 +29,7 @@ class LinkParentHandler(
         return BotCommand("/link_parent", "Привязывает телеграм айди пользователя как родителя к указанному ученику")
     }
 
-    override fun handle(update: Update): PartialBotApiMethod<Message> {
+    override fun handle(update: Update, botSession: Session?): PartialBotApiMethod<Message> {
         val args = parseArgs(update)
         if (args.isEmpty()) {
             return SendMessage.builder()

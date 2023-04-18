@@ -1,5 +1,6 @@
 package ru.apexman.botpupilsbalances.service.bot.telegramhandlers.commandhandlers
 
+import org.apache.shiro.session.Session
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
@@ -22,7 +23,7 @@ class PushHandler(
         return BotCommand("/push", "Отправка актуального состояния бд на страницу 'main'")
     }
 
-    override fun handle(update: Update): PartialBotApiMethod<Message> {
+    override fun handle(update: Update, botSession: Session?): PartialBotApiMethod<Message> {
         val operationResult = pushingToMainPageService.pushToMainPage()
         if (!operationResult.success) {
             return SendMessage.builder()

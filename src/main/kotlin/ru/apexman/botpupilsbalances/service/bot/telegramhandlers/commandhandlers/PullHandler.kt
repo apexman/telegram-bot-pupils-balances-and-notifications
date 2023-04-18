@@ -1,5 +1,6 @@
 package ru.apexman.botpupilsbalances.service.bot.telegramhandlers.commandhandlers
 
+import org.apache.shiro.session.Session
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
@@ -25,7 +26,7 @@ class PullHandler(
     override fun getBotCommand(): BotCommand? {
         return BotCommand("/pull", "Загрузить новых учеников")
     }
-    override fun handle(update: Update): PartialBotApiMethod<Message> {
+    override fun handle(update: Update, botSession: Session?): PartialBotApiMethod<Message> {
         val operationResult = pullPageService.readPullPage()
         if (!operationResult.success) {
             return SendMessage.builder()

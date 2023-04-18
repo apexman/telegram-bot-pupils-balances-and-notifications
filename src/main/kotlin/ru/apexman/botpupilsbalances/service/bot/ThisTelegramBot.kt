@@ -56,8 +56,9 @@ class ThisTelegramBot(
                 return
             }
             for (handler in handlers) {
-                if (handler.canHandle(update, botUsername, telegramConfiguration)) {
-                    when (val apiMethod = handler.handle(update)) {
+                if (handler.canHandle(update, botSession, botUsername, telegramConfiguration)) {
+                    //todo: handle async
+                    when (val apiMethod = handler.handle(update, botSession)) {
                         is BotApiMethodMessage -> execute(apiMethod)
                         is SendPhoto -> execute(apiMethod)
                         is SendDocument -> execute(apiMethod)

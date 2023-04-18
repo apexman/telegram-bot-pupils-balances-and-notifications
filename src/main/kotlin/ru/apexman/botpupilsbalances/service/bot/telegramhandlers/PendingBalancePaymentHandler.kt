@@ -1,5 +1,6 @@
 package ru.apexman.botpupilsbalances.service.bot.telegramhandlers
 
+import org.apache.shiro.session.Session
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
@@ -45,7 +46,7 @@ class PendingBalancePaymentHandler(
         return null
     }
 
-    override fun canHandle(update: Update, botUsername: String, telegramConfiguration: TelegramConfiguration): Boolean {
+    override fun canHandle(update: Update, botSession: Session?, botUsername: String, telegramConfiguration: TelegramConfiguration): Boolean {
         if (update.hasMessage()) {
             return checkPermissions(update, botUsername, telegramConfiguration)
                     && (update.message.hasPhoto()
@@ -54,7 +55,7 @@ class PendingBalancePaymentHandler(
         return false
     }
 
-    override fun handle(update: Update): PartialBotApiMethod<Message> {
+    override fun handle(update: Update, botSession: Session?): PartialBotApiMethod<Message> {
         val args = parseArgs(update)
         if (args.isEmpty()) {
             return SendMessage.builder()

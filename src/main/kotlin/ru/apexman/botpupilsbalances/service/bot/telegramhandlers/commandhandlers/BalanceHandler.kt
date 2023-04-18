@@ -1,5 +1,6 @@
 package ru.apexman.botpupilsbalances.service.bot.telegramhandlers.commandhandlers
 
+import org.apache.shiro.session.Session
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
@@ -13,7 +14,6 @@ import ru.apexman.botpupilsbalances.repository.ContactRepository
 import ru.apexman.botpupilsbalances.service.QRCodeGenerator
 import ru.apexman.botpupilsbalances.service.bot.telegramhandlers.PrivateChatHandler
 import ru.apexman.botpupilsbalances.service.bot.telegramhandlers.TelegramMessageHandler
-import java.awt.Color
 import java.time.LocalDateTime
 
 /**
@@ -32,7 +32,7 @@ class BalanceHandler(
         return BotCommand("/balance", "Количество предоплаченных дней для каждого ребенка")
     }
 
-    override fun handle(update: Update): PartialBotApiMethod<Message> {
+    override fun handle(update: Update, botSession: Session?): PartialBotApiMethod<Message> {
         val tgId = update.message.from.id
         val contactsIfParent =
             contactRepository.findByContactTypeAndContactValue(ContactType.PARENT_ID.name, tgId.toString())

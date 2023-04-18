@@ -1,5 +1,6 @@
 package ru.apexman.botpupilsbalances.service.bot.telegramhandlers.commandhandlers
 
+import org.apache.shiro.session.Session
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
@@ -20,7 +21,7 @@ class StartHandler : TelegramMessageHandler, PrivateChatHandler {
         return BotCommand("/start", "Приветственное сообщение")
     }
 
-    override fun handle(update: Update): PartialBotApiMethod<Message> {
+    override fun handle(update: Update, botSession: Session?): PartialBotApiMethod<Message> {
         return SendMessage.builder()
             .chatId(update.message.chatId)
             .text("ЗДЕСЬ ДОЛЖЕН БЫТЬ ТЕКСТ ПРИВЕТСТВЕННОГО СООБЩЕНИЯ И ИНСТРУКЦИЯ ДЛЯ ПОЛЬЗОВАТЕЛЯ О ВЗАИМОДЕЙСТВИИ С БОТОМ")

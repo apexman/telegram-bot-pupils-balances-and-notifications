@@ -1,6 +1,7 @@
 package ru.apexman.botpupilsbalances.service.bot.telegramhandlers.commandhandlers
 
 import jakarta.annotation.PostConstruct
+import org.apache.shiro.session.Session
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
@@ -32,7 +33,7 @@ class HelpHandler(
         return BotCommand("/help", "Инструкция по взаимодействию с ботом")
     }
 
-    override fun handle(update: Update): PartialBotApiMethod<Message> {
+    override fun handle(update: Update, botSession: Session?): PartialBotApiMethod<Message> {
         val joinToString = commands.joinToString("\n") { "${it.command} - ${it.description}" }
         return SendMessage.builder()
             .chatId(update.message.chatId)
