@@ -92,7 +92,7 @@ class ThisTelegramBot(
                 SendMessage.builder()
                     .chatId(update?.message?.chatId!!)
                     //todo: fix message
-                    .text("Простите, при обработке сообщения произошли ошибки, администраторы сообщены о проблеме")
+                    .text("Простите, при обработке вашего запроса произошла ошибка")
                     .allowSendingWithoutReply(true)
                     .build()
             )
