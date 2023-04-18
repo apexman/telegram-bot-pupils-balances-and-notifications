@@ -35,6 +35,7 @@ class StudentService(
     private val balancePaymentRepository: BalancePaymentRepository,
     private val penaltyRepository: PenaltyRepository,
     private val contactService: ContactService,
+    private val paymentService: PaymentService,
 ) {
     private val logger = LoggerFactory.getLogger(StudentService::class.java)
 
@@ -136,20 +137,11 @@ class StudentService(
         modifiedBy: String,
         balances: MutableList<BalancePayment>,
     ) {
-        val balanceDelta = pageRow.balance - student.balance
+        val builtBalance = paymentService.buildBalance(student, pageRow.balance, modifiedBy)
         student.balance = pageRow.balance
-        if (balanceDelta != 0) {
-            val balancePayment = BalancePayment(
-                createdByContact = null,
-                createdBy = modifiedBy,
-                student = student,
-                document = null,
-                delta = balanceDelta,
-                comment = null,
-                approvedBy = modifiedBy
-            )
-            student.balances.add(balancePayment)
-            balances.add(balancePayment)
+        if (builtBalance != null) {
+            student.balances.add(builtBalance)
+            balances.add(builtBalance)
         }
     }
 
@@ -159,17 +151,11 @@ class StudentService(
         modifiedBy: String,
         penalties: MutableList<Penalty>,
     ) {
-        val penaltyDelta = pageRow.penalty - student.penalty
+        val builtPenalty = paymentService.buildPenalty(student, pageRow.penalty, modifiedBy)
         student.penalty = pageRow.penalty
-        if (penaltyDelta.compareTo(BigDecimal.ZERO) != 0) {
-            val penalty = Penalty(
-                createdBy = modifiedBy,
-                student = student,
-                delta = penaltyDelta,
-                currencyName = student.currencyName,
-            )
-            student.penalties.add(penalty)
-            penalties.add(penalty)
+        if (builtPenalty != null) {
+            student.penalties.add(builtPenalty)
+            penalties.add(builtPenalty)
         }
     }
 
