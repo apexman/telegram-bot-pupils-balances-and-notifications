@@ -5,10 +5,11 @@ import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod
 import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand
+import ru.apexman.botpupilsbalances.service.bot.telegramhandlers.AdminsChatHandler
 import ru.apexman.botpupilsbalances.service.bot.telegramhandlers.TelegramMessageHandler
 
 @Component
-class AlarmListHandler: TelegramMessageHandler {
+class AlarmListHandler: TelegramMessageHandler, AdminsChatHandler {
 
     override fun getBotCommand(): BotCommand? {
         return BotCommand("/alarm_list", "Get some alarm_list")

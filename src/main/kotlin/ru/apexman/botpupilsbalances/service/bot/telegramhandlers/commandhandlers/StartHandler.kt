@@ -6,8 +6,6 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand
-import ru.apexman.botpupilsbalances.service.bot.telegramhandlers.AdminsChatHandler
-import ru.apexman.botpupilsbalances.service.bot.telegramhandlers.CollectingReceiptsChatHandler
 import ru.apexman.botpupilsbalances.service.bot.telegramhandlers.PrivateChatHandler
 import ru.apexman.botpupilsbalances.service.bot.telegramhandlers.TelegramMessageHandler
 
@@ -16,7 +14,7 @@ import ru.apexman.botpupilsbalances.service.bot.telegramhandlers.TelegramMessage
  * TODO: изменить сообщение
  */
 @Component
-class StartHandler : TelegramMessageHandler, AdminsChatHandler, PrivateChatHandler, CollectingReceiptsChatHandler {
+class StartHandler : TelegramMessageHandler, PrivateChatHandler {
 
     override fun getBotCommand(): BotCommand? {
         return BotCommand("/start", "Приветственное сообщение")
