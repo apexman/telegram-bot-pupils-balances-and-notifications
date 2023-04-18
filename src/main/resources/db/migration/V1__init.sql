@@ -61,6 +61,7 @@ create table if not exists documents
     last_modified_at timestamptz not null,
     document_name    varchar not null,
     document_value   bytea not null,
+    document_hash    bytea,
     document_type    varchar not null
 );
 

@@ -13,6 +13,8 @@ import ru.apexman.botpupilsbalances.repository.ContactRepository
 import ru.apexman.botpupilsbalances.service.QRCodeGenerator
 import ru.apexman.botpupilsbalances.service.bot.telegramhandlers.PrivateChatHandler
 import ru.apexman.botpupilsbalances.service.bot.telegramhandlers.TelegramMessageHandler
+import java.awt.Color
+import java.time.LocalDateTime
 
 /**
  * Для родителя:
@@ -53,18 +55,22 @@ class BalanceHandler(
                 .text(text)
                 .build()
         }
+        if (contactsIfStudent.size > 1) {
+            //TODO: change relations
+            throw RuntimeException("Найдено несколько учеников с TgId='$tgId'")
+        }
+        val student = contactsIfStudent.first().student
 
-        val text = contactsIfStudent.map { it.student }.joinToString("\n\n") { "${it.fullUserName}: ${it.balance}" }
-        val bytes = qrCodeGeneratorService.generate("darova ebat'")
+        val bytes = if (student.balance > 0) {
+            qrCodeGeneratorService.generate("${student.fullUserName} ACTIVE ${LocalDateTime.now()}", Color.GREEN)
+        } else {
+            qrCodeGeneratorService.generate("${student.fullUserName} FORBIDDEN ${LocalDateTime.now()}", Color.RED)
+        }
         return SendPhoto.builder()
             .chatId(update.message.chatId)
-            .caption(text)
-            .photo(InputFile(bytes.inputStream(), "asdf"))
+            .caption("${student.fullUserName}: ${student.balance}")
+            .photo(InputFile(bytes.inputStream(), "${student.fullUserName}-${LocalDateTime.now()}.png"))
             .allowSendingWithoutReply(true)
             .build()
-//        return SendMessage.builder()
-//            .chatId(update.message.chatId)
-//            .text(text)
-//            .build()
     }
 }
