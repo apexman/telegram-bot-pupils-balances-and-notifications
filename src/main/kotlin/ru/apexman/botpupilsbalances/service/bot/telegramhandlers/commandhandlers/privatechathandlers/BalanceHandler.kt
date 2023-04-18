@@ -1,4 +1,4 @@
-package ru.apexman.botpupilsbalances.service.bot.telegramhandlers.commandhandlers
+package ru.apexman.botpupilsbalances.service.bot.telegramhandlers.commandhandlers.privatechathandlers
 
 import org.apache.shiro.session.Session
 import org.springframework.stereotype.Component
@@ -6,7 +6,6 @@ import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto
 import org.telegram.telegrambots.meta.api.objects.InputFile
-import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand
 import ru.apexman.botpupilsbalances.constants.ContactType
@@ -14,6 +13,7 @@ import ru.apexman.botpupilsbalances.repository.ContactRepository
 import ru.apexman.botpupilsbalances.service.QRCodeGenerator
 import ru.apexman.botpupilsbalances.service.bot.telegramhandlers.PrivateChatHandler
 import ru.apexman.botpupilsbalances.service.bot.telegramhandlers.TelegramMessageHandler
+import java.io.Serializable
 import java.time.LocalDateTime
 
 /**
@@ -32,7 +32,7 @@ class BalanceHandler(
         return BotCommand("/balance", "Количество предоплаченных дней для каждого ребенка")
     }
 
-    override fun handle(update: Update, botSession: Session?): Collection<PartialBotApiMethod<Message>> {
+    override fun handle(update: Update, botSession: Session?): List<PartialBotApiMethod<out Serializable>> {
         val tgId = update.message.from.id
         val contactsIfParent =
             contactRepository.findByContactTypeAndContactValue(ContactType.PARENT_ID.name, tgId.toString())

@@ -2,14 +2,14 @@ package ru.apexman.botpupilsbalances.service.bot.telegramhandlers
 
 import org.apache.shiro.session.Session
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod
-import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand
 import ru.apexman.botpupilsbalances.service.notification.TelegramConfiguration
+import java.io.Serializable
 
 interface TelegramMessageHandler {
     fun getBotCommand(): BotCommand?
-    fun handle(update: Update, botSession: Session?): Collection<PartialBotApiMethod<Message>>
+    fun handle(update: Update, botSession: Session?): List<PartialBotApiMethod<out Serializable>>
     fun canHandle(
         update: Update,
         botSession: Session?,
@@ -31,17 +31,26 @@ interface TelegramMessageHandler {
                 return checkPermissions(update, botUsername, telegramConfiguration)
             }
         }
-        return false
+        return this is CallbackQueryHandler
+                && update.hasCallbackQuery()
+                && checkCallbackQuery(update, botUsername, telegramConfiguration)
+                && parseCallbackCommand(update) == this.getCommandName()
     }
 
     fun parseCommand(update: Update): String? {
         return update.message.text.subSequence(0, update.message.entities[0].length).split("@").firstOrNull()
     }
 
+    fun parseCallbackCommand(update: Update): String? {
+        return update.callbackQuery?.data?.split(" ")?.firstOrNull()
+    }
+
     fun parseArgs(update: Update): List<String> {
-        val strings = update.message.text?.split(" ")?.filter { it.isNotEmpty() }
+        val strings = update.message?.text?.split(" ")?.filter { it.isNotEmpty() }
+        val callbackList = update.callbackQuery?.data?.split(" ")?.filter { it.isNotEmpty() }
         return strings?.subList(1, strings.size)
-            ?: update.message.caption?.split(" ")?.filter { it.isNotEmpty() }
+            ?: update.message?.caption?.split(" ")?.filter { it.isNotEmpty() }
+            ?: callbackList?.subList(1, callbackList.size)
             ?: listOf()
     }
 
@@ -49,6 +58,7 @@ interface TelegramMessageHandler {
         return checkPrivateChat(update, botUsername, telegramConfiguration)
                 || checkAdminsChat(update, botUsername, telegramConfiguration)
                 || checkCollectionReceiptsChat(update, botUsername, telegramConfiguration)
+                || checkCallbackQuery(update, botUsername, telegramConfiguration)
     }
 
     fun checkPrivateChat(update: Update, botUsername: String, telegramConfiguration: TelegramConfiguration): Boolean {
@@ -67,7 +77,11 @@ interface TelegramMessageHandler {
         return this is AdminsChatHandler && update.message?.chatId?.toString() == telegramConfiguration.collectingReceiptsChatId.trim()
     }
 
-    fun getCommandRequester(update: Update): String {
+    fun checkCallbackQuery(update: Update, botUsername: String, telegramConfiguration: TelegramConfiguration): Boolean {
+        return this is CallbackQueryHandler && update.hasCallbackQuery()
+    }
+
+    fun getBotCommandRequester(update: Update): String {
         val command = getBotCommand()?.command
         val commandName = if (command != null) "Via command='$command' " else ""
         val tgId: Long = update.message.from.id

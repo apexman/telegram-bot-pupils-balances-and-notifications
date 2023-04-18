@@ -1,10 +1,9 @@
-package ru.apexman.botpupilsbalances.service.bot.telegramhandlers.commandhandlers
+package ru.apexman.botpupilsbalances.service.bot.telegramhandlers.commandhandlers.adminschathandlers
 
 import org.apache.shiro.session.Session
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
-import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand
 import ru.apexman.botpupilsbalances.constants.ContactType
@@ -12,6 +11,7 @@ import ru.apexman.botpupilsbalances.constants.Parsers
 import ru.apexman.botpupilsbalances.repository.*
 import ru.apexman.botpupilsbalances.service.bot.telegramhandlers.AdminsChatHandler
 import ru.apexman.botpupilsbalances.service.bot.telegramhandlers.TelegramMessageHandler
+import java.io.Serializable
 import java.time.format.DateTimeFormatter
 
 /**
@@ -30,7 +30,7 @@ class ProfileHandler(
         return BotCommand("/profile", "Присылает подробную информацию об ученике со всеми деталями")
     }
 
-    override fun handle(update: Update, botSession: Session?): Collection<PartialBotApiMethod<Message>> {
+    override fun handle(update: Update, botSession: Session?): List<PartialBotApiMethod<out Serializable>> {
         val args = parseArgs(update)
         if (args.isEmpty()) {
             return listOf(SendMessage.builder()

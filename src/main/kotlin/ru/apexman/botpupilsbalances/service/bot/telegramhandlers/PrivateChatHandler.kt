@@ -1,6 +1,6 @@
 package ru.apexman.botpupilsbalances.service.bot.telegramhandlers
 
 /**
- * Хендлер доступн из приватного чата
+ * Хендлер доступен только после нажатия inline кнопки
  */
 interface PrivateChatHandler

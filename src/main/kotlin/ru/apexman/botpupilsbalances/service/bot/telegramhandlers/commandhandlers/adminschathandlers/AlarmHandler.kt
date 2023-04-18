@@ -1,22 +1,22 @@
-package ru.apexman.botpupilsbalances.service.bot.telegramhandlers.commandhandlers
+package ru.apexman.botpupilsbalances.service.bot.telegramhandlers.commandhandlers.adminschathandlers
 
 import org.apache.shiro.session.Session
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod
-import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand
 import ru.apexman.botpupilsbalances.service.bot.telegramhandlers.AdminsChatHandler
 import ru.apexman.botpupilsbalances.service.bot.telegramhandlers.TelegramMessageHandler
+import java.io.Serializable
 
 @Component
-class PauseListHandler: TelegramMessageHandler, AdminsChatHandler {
+class AlarmHandler: TelegramMessageHandler, AdminsChatHandler {
 
     override fun getBotCommand(): BotCommand? {
-        return BotCommand("/pause_list", "Get some pause_list")
+        return BotCommand("/alarm", "Get some alarm")
     }
 
-    override fun handle(update: Update, botSession: Session?): Collection<PartialBotApiMethod<Message>> {
+    override fun handle(update: Update, botSession: Session?): List<PartialBotApiMethod<out Serializable>> {
         TODO("implement")
     }
 }

@@ -1,16 +1,16 @@
-package ru.apexman.botpupilsbalances.service.bot.telegramhandlers.commandhandlers
+package ru.apexman.botpupilsbalances.service.bot.telegramhandlers.commandhandlers.adminschathandlers
 
 import org.apache.shiro.session.Session
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
-import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand
 import ru.apexman.botpupilsbalances.service.StudentService
 import ru.apexman.botpupilsbalances.service.bot.telegramhandlers.AdminsChatHandler
 import ru.apexman.botpupilsbalances.service.bot.telegramhandlers.TelegramMessageHandler
 import ru.apexman.botpupilsbalances.service.googleapi.pages.RefreshingFromMainPageService
+import java.io.Serializable
 
 /**
  * Обновляет состояние базы данных в соответствии с текущим состоянием таблицы Google, вкладки “main”
@@ -25,7 +25,7 @@ class RefreshHandler(
         return BotCommand("/refresh", "Обновляет состояние базы данных в соответствии с текущим состоянием таблицы Google, вкладки 'main'")
     }
 
-    override fun handle(update: Update, botSession: Session?): Collection<PartialBotApiMethod<Message>> {
+    override fun handle(update: Update, botSession: Session?): List<PartialBotApiMethod<out Serializable>> {
         val operationResult = refreshingFromMainPageService.refreshFromMainPage()
         if (!operationResult.success) {
             return listOf(SendMessage.builder()
@@ -33,7 +33,7 @@ class RefreshHandler(
                 .text("Возникли ошибки, обновление данных прервано:\n\n" + operationResult.errors.joinToString("\n\n"))
                 .build())
         }
-        val students = studentService.updateStudents(operationResult.result, getCommandRequester(update))
+        val students = studentService.updateStudents(operationResult.result, getBotCommandRequester(update))
         return listOf(SendMessage.builder()
             .chatId(update.message.chatId)
             .text("Количество обновленных учеников: ${students.size}")

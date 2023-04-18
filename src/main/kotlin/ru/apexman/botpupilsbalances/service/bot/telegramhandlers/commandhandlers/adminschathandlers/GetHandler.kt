@@ -1,13 +1,13 @@
-package ru.apexman.botpupilsbalances.service.bot.telegramhandlers.commandhandlers
+package ru.apexman.botpupilsbalances.service.bot.telegramhandlers.commandhandlers.adminschathandlers
 
 import org.apache.shiro.session.Session
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod
-import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand
 import ru.apexman.botpupilsbalances.service.bot.telegramhandlers.AdminsChatHandler
 import ru.apexman.botpupilsbalances.service.bot.telegramhandlers.TelegramMessageHandler
+import java.io.Serializable
 
 @Component
 class GetHandler: TelegramMessageHandler, AdminsChatHandler {
@@ -16,7 +16,7 @@ class GetHandler: TelegramMessageHandler, AdminsChatHandler {
         return BotCommand("/get", "Get some get")
     }
 
-    override fun handle(update: Update, botSession: Session?): Collection<PartialBotApiMethod<Message>> {
+    override fun handle(update: Update, botSession: Session?): List<PartialBotApiMethod<out Serializable>> {
         TODO("implement")
     }
 }

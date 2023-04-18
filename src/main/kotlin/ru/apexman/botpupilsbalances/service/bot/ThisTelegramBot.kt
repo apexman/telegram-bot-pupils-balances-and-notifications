@@ -5,6 +5,7 @@ import org.apache.shiro.session.Session
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.bots.DefaultBotOptions
+import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery
 import org.telegram.telegrambots.meta.api.methods.botapimethods.BotApiMethodMessage
 import org.telegram.telegrambots.meta.api.methods.commands.SetMyCommands
 import org.telegram.telegrambots.meta.api.methods.send.SendDocument
@@ -12,9 +13,9 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.api.objects.User
-import org.telegram.telegrambots.meta.api.objects.commands.BotCommand
 import org.telegram.telegrambots.session.DefaultChatIdConverter
 import org.telegram.telegrambots.session.TelegramLongPollingSessionBot
+import ru.apexman.botpupilsbalances.service.bot.telegramhandlers.CallbackQueryHandler
 import ru.apexman.botpupilsbalances.service.bot.telegramhandlers.PendingBalancePaymentHandler
 import ru.apexman.botpupilsbalances.service.bot.telegramhandlers.TelegramMessageHandler
 import ru.apexman.botpupilsbalances.service.notification.TelegramConfiguration
@@ -33,9 +34,10 @@ class ThisTelegramBot(
     @PostConstruct
     fun postConstruct() {
         botUser = me
-        val botCommands = handlers.mapNotNull { it.getBotCommand() }
+        validateBotCommands()
+        validateOnCallbackQueryCommands()
         setBot()
-        validateBotCommands(botCommands)
+        val botCommands = handlers.mapNotNull { it.getBotCommand() }
         execute(SetMyCommands(botCommands, null, null))
     }
 
@@ -64,6 +66,7 @@ class ThisTelegramBot(
                             is BotApiMethodMessage -> execute(apiMethod)
                             is SendPhoto -> execute(apiMethod)
                             is SendDocument -> execute(apiMethod)
+                            is AnswerCallbackQuery -> execute(apiMethod)
                             else -> throw RuntimeException("Unhandled response type: ${apiMethod.javaClass.name}")
                         }
                     }
@@ -94,7 +97,7 @@ class ThisTelegramBot(
         try {
             execute(
                 SendMessage.builder()
-                    .chatId(update?.message?.chatId!!)
+                    .chatId(update?.message?.chatId ?: update?.callbackQuery?.message?.chatId!!)
                     //todo: fix message
                     .text("Простите, при обработке вашего запроса произошла ошибка")
                     .allowSendingWithoutReply(true)
@@ -113,13 +116,25 @@ class ThisTelegramBot(
         }
     }
 
-    private fun validateBotCommands(botCommands: List<BotCommand>) {
+    private fun validateBotCommands() {
+        val botCommands = handlers.mapNotNull { it.getBotCommand() }
         val commands = mutableListOf<String>()
         for (botCommand in botCommands) {
             if (commands.contains(botCommand.command)) {
                 throw RuntimeException("Command duplicates: '${botCommand.command}'")
             }
             commands.add(botCommand.command)
+        }
+    }
+
+    private fun validateOnCallbackQueryCommands() {
+        val botCommands = handlers.filterIsInstance(CallbackQueryHandler::class.java).map { it.getCommandName() }
+        val commands = mutableListOf<String>()
+        for (botCommand in botCommands) {
+            if (commands.contains(botCommand)) {
+                throw RuntimeException("Command duplicates: '${botCommand}'")
+            }
+            commands.add(botCommand)
         }
     }
 

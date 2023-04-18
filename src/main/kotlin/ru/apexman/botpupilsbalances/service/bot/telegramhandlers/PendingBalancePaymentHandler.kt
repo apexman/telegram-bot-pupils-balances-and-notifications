@@ -4,7 +4,6 @@ import org.apache.shiro.session.Session
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
-import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand
 import ru.apexman.botpupilsbalances.constants.ContactType
@@ -15,6 +14,7 @@ import ru.apexman.botpupilsbalances.service.bot.TelegramFilesService
 import ru.apexman.botpupilsbalances.service.bot.ThisTelegramBot
 import ru.apexman.botpupilsbalances.service.notification.TelegramConfiguration
 import ru.apexman.botpupilsbalances.service.notification.TelegramNotificationService
+import java.io.Serializable
 
 /**
  * Хендлер для загрузки файлов в систему с последующим оповещением чата менеджеров для обработки запроса
@@ -59,7 +59,7 @@ class PendingBalancePaymentHandler(
         return false
     }
 
-    override fun handle(update: Update, botSession: Session?): Collection<PartialBotApiMethod<Message>> {
+    override fun handle(update: Update, botSession: Session?): List<PartialBotApiMethod<out Serializable>> {
         val args = parseArgs(update)
         if (args.isEmpty()) {
             return listOf(SendMessage.builder()
@@ -87,9 +87,9 @@ class PendingBalancePaymentHandler(
                 .build()))
 
         if (update.message.document != null) {
-            telegramFilesService!!.saveDocument(update, update.message.document, contact, getCommandRequester(update))
+            telegramFilesService!!.saveDocument(update, update.message.document, contact, getBotCommandRequester(update))
         } else if (update.message.photo != null && update.message.photo.isNotEmpty()) {
-            telegramFilesService!!.savePhoto(update, update.message.photo, contact, getCommandRequester(update))
+            telegramFilesService!!.savePhoto(update, update.message.photo, contact, getBotCommandRequester(update))
         } else {
             return listOf(SendMessage.builder()
                 .chatId(update.message.chatId)
