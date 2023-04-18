@@ -17,6 +17,7 @@ import java.util.*
 @Table(name = "students")
 class Student(
     var googleId: String,
+    var publicId: String,
     var fullUserName: String,
     var birthday: LocalDate,
     var dateEnrollment: LocalDate,
@@ -32,8 +33,6 @@ class Student(
     @Column(name = "alarm")
     var isAlarm: Boolean,
     var penalty: BigDecimal,
-    @ManyToMany(mappedBy = "students")
-    val parents: MutableCollection<Parent> = mutableListOf(),
     @OneToMany(mappedBy = "student")
     val contacts: MutableCollection<Contact> = mutableListOf(),
     @OneToMany(mappedBy = "student")
@@ -50,6 +49,7 @@ class Student(
         fun from(pageRow: GooglePullPageRowResponse): Student {
             return Student(
                 googleId = UUID.randomUUID().toString(),
+                publicId = UUID.randomUUID().toString(),
                 fullUserName = pageRow.name,
                 birthday = pageRow.birthday,
                 dateEnrollment = pageRow.dateEnrollment,
@@ -62,7 +62,6 @@ class Student(
                 isPause = false,
                 isAlarm = false,
                 penalty = BigDecimal.ZERO,
-                parents = mutableListOf(),
                 contacts = mutableListOf(),
                 comments = mutableListOf(),
                 alarmDetails = mutableListOf(),

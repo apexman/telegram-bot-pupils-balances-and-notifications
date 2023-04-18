@@ -6,7 +6,6 @@ import ru.apexman.botpupilsbalances.constants.CurrencyName
 import ru.apexman.botpupilsbalances.constants.Parsers
 import ru.apexman.botpupilsbalances.dto.GoogleMainPageRowResponse
 import ru.apexman.botpupilsbalances.dto.OperationResult
-import ru.apexman.botpupilsbalances.entity.user.Student
 import ru.apexman.botpupilsbalances.repository.StudentRepository
 import ru.apexman.botpupilsbalances.service.StudentService
 import ru.apexman.botpupilsbalances.service.googleapi.SheetsProperties
@@ -83,7 +82,7 @@ class RefreshingFromMainPageService(
         val errors = mutableListOf<String>()
         var googleId = parse(values.getOrNull(0), this::parseString, errors,
             "Идентификатор ID не заполнен")
-        val publicId = parse(values.getOrNull(1), this::parseString, errors,
+        var publicId = parse(values.getOrNull(1), this::parseString, errors,
             "Идентификатор PUBLIC_D не заполнен")
         val name = parse(values.getOrNull(2), this::parseString, errors,
             "Имя не заполнено")
@@ -132,8 +131,18 @@ class RefreshingFromMainPageService(
         currency = currency?.uppercase()
 
         if (googleId != null && !studentRepository.existsByGoogleId(googleId)) {
-            //TODO: what if skip?
-            errors.add("Нет студента с идентификатором ID = '$googleId'")
+            errors.add("Нет ученика с идентификатором ID = '$googleId'")
+            googleId = null
+        }
+        if (publicId != null && !studentRepository.existsByPublicId(publicId)) {
+            errors.add("Нет ученика с идентификатором PUBLIC_ID = '$publicId'")
+            publicId = null
+        }
+        if (googleId != null && publicId != null
+            && studentRepository.findByGoogleId(googleId)?.id != studentRepository.findByPublicId(publicId)?.id
+        ) {
+            errors.add("Найдены разные ученики по идентификаторам ID = '$publicId', PUBLIC_ID = '$publicId'")
+            publicId = null
             googleId = null
         }
 
@@ -162,7 +171,6 @@ class RefreshingFromMainPageService(
                 publicId = publicId,
                 name = name,
                 birthday = birthday,
-//                age = ChronoUnit.YEARS.between(birthday, LocalDate.now()),
                 dateEnrollment = dateEnrollment,
                 classNum = classNum,
                 hostel = hostel,

@@ -26,7 +26,7 @@ class PushHandler(
         if (!operationResult.success) {
             return SendMessage.builder()
                 .chatId(update.message.chatId)
-                .text("Возникли ошибки, выгрузка прервана:\n\n" + operationResult.errors.joinToString("\n"))
+                .text("Возникли ошибки, выгрузка прервана:\n\n" + operationResult.errors.joinToString("\n\n"))
                 .build()
         }
         return SendMessage.builder()

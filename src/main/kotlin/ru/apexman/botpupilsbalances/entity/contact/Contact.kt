@@ -1,10 +1,9 @@
 package ru.apexman.botpupilsbalances.entity.contact
 
-import jakarta.persistence.Entity
-import jakarta.persistence.JoinColumn
-import jakarta.persistence.ManyToOne
-import jakarta.persistence.Table
+import jakarta.persistence.*
 import ru.apexman.botpupilsbalances.entity.AbstractEntityWithLongKey
+import ru.apexman.botpupilsbalances.entity.payment.BalancePayment
+import ru.apexman.botpupilsbalances.entity.payment.PendingBalancePayment
 import ru.apexman.botpupilsbalances.entity.user.Student
 
 @Entity
@@ -15,4 +14,8 @@ class Contact(
     val student: Student,
     val contactType: String,
     var contactValue: String,
+    @OneToMany(mappedBy = "createdByContact")
+    val pendingBalancePayments: MutableCollection<PendingBalancePayment> = mutableListOf(),
+    @OneToMany(mappedBy = "createdByContact")
+    val balancePayments: MutableCollection<BalancePayment> = mutableListOf(),
 ) : AbstractEntityWithLongKey()

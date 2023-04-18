@@ -9,7 +9,7 @@ import ru.apexman.botpupilsbalances.constants.ContactType
 import ru.apexman.botpupilsbalances.entity.contact.Contact
 import ru.apexman.botpupilsbalances.entity.user.Student
 import ru.apexman.botpupilsbalances.repository.ContactRepository
-import ru.apexman.botpupilsbalances.repository.ParentRepository
+import ru.apexman.botpupilsbalances.repository.StudentRepository
 import ru.apexman.botpupilsbalances.service.bot.telegramhandlers.PrivateChatHandler
 import ru.apexman.botpupilsbalances.service.bot.telegramhandlers.TelegramMessageHandler
 
@@ -18,15 +18,14 @@ import ru.apexman.botpupilsbalances.service.bot.telegramhandlers.TelegramMessage
  */
 @Component
 class LinkChildHandler(
-    private val parentRepository: ParentRepository,
     private val contactRepository: ContactRepository,
+    private val studentRepository: StudentRepository,
 ) : TelegramMessageHandler, PrivateChatHandler {
 
     override fun getBotCommand(): BotCommand? {
         return BotCommand("/link_child", "Привязывает телеграм айди ученика")
     }
 
-    //TODO: fix when parent has multiple children
     override fun handle(update: Update): BotApiMethodMessage {
         val args = parseArgs(update)
         if (args.isEmpty()) {
@@ -36,26 +35,24 @@ class LinkChildHandler(
                 .build()
         }
         val publicId = args[0]
-        val parent = (parentRepository.findByPublicId(publicId)
+        val student = (studentRepository.findByPublicId(publicId)
             ?: return SendMessage.builder()
                 .chatId(update.message.chatId)
-                .text("Родитель с таким public_id не найден")
+                .text("Ученик с таким public_id не найден")
                 .build())
         val childTgId: Long = update.message.from.id
         val childTgUserName: String? = update.message.from.userName
         val savingContacts = mutableListOf<Contact>()
-        for (student in parent.students) {
-            val contacts = contactRepository.findAllByStudent(student)
-            savingContacts.add(buildTgIdContact(contacts, student, childTgId))
-            savingContacts.add(buildTgChatIdContact(contacts, student, update))
-            if (childTgUserName != null) {
-                savingContacts.add(buildTgUserNameContact(contacts, student, childTgUserName))
-            }
+        val contacts = contactRepository.findAllByStudent(student)
+        savingContacts.add(buildTgIdContact(contacts, student, childTgId))
+        savingContacts.add(buildTgChatIdContact(contacts, student, update))
+        if (childTgUserName != null) {
+            savingContacts.add(buildTgUserNameContact(contacts, student, childTgUserName))
         }
         contactRepository.saveAll(savingContacts)
         return SendMessage.builder()
             .chatId(update.message.chatId)
-            .text("ВЫ ЗАПИСАНЫ НАШИМ УЧЕНИКОМ")
+            .text("${student.fullUserName}, ВЫ ЗАПИСАНЫ НАШИМ УЧЕНИКОМ")
             .build()
     }
 

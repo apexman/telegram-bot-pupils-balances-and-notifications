@@ -59,9 +59,11 @@ interface TelegramMessageHandler {
     }
 
     fun getCommandRequester(update: Update): String {
+        val command = getBotCommand()?.command
+        val commandName = if (command != null) "Via command='$command' " else ""
         val tgId: Long = update.message.from.id
         val tgUserName: String? = update.message.from.userName
-        val userName = if (tgUserName != null) "TgUserName='$tgUserName'" else ""
-        return "TgId='$tgId' $userName"
+        val userName = if (tgUserName != null) " TgUserName='$tgUserName'" else ""
+        return "${commandName}TgId='$tgId'$userName"
     }
 }

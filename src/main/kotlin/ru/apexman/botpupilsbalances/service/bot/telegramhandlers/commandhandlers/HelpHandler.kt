@@ -16,10 +16,6 @@ class HelpHandler: TelegramMessageHandler, AdminsChatHandler {
     }
 
     override fun handle(update: Update): BotApiMethodMessage {
-        //TODO:
-        return SendMessage.builder()
-            .chatId(update.message.chatId)
-            .text("/help")
-            .build()
+        TODO("implement")
     }
 }

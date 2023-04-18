@@ -28,7 +28,7 @@ class RefreshHandler(
         if (!operationResult.success) {
             return SendMessage.builder()
                 .chatId(update.message.chatId)
-                .text("Возникли ошибки, обновление данных прервано:\n\n" + operationResult.errors.joinToString("\n"))
+                .text("Возникли ошибки, обновление данных прервано:\n\n" + operationResult.errors.joinToString("\n\n"))
                 .build()
         }
         val students = studentService.updateStudents(operationResult.result, getCommandRequester(update))

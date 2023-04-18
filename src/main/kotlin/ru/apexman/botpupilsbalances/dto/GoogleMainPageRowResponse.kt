@@ -5,7 +5,7 @@ import java.time.LocalDate
 
 data class GoogleMainPageRowResponse(
     val googleId: String,
-    val publicId: String?,
+    val publicId: String,
     val name: String,
     val birthday: LocalDate,
 //    val age: Long,

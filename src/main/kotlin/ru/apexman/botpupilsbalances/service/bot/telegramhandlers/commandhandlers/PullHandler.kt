@@ -29,7 +29,7 @@ class PullHandler(
         if (!operationResult.success) {
             return SendMessage.builder()
                 .chatId(update.message.chatId)
-                .text("Возникли ошибки, загрузка прервана:\n\n" + operationResult.errors.joinToString("\n"))
+                .text("Возникли ошибки, загрузка прервана:\n\n" + operationResult.errors.joinToString("\n\n"))
                 .build()
         }
         val students = studentService.createNewStudents(operationResult.result)

@@ -49,6 +49,7 @@ class PullPageService(
         return OperationResult(errors.isEmpty(), result, errors)
     }
 
+    //TODO: mapping by column names
     /**
      * Ожидаемый порядок колонок:
      * - NAME

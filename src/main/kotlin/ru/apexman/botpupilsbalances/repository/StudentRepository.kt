@@ -7,6 +7,10 @@ interface StudentRepository : JpaRepository<Student, Long> {
 
     fun existsByGoogleId(googleId: String): Boolean
 
+    fun existsByPublicId(publicId: String): Boolean
+
     fun findByGoogleId(googleId: String): Student?
+
+    fun findByPublicId(publicId: String): Student?
 
 }

@@ -8,6 +8,7 @@ import ru.apexman.botpupilsbalances.entity.payment.PendingBalancePayment
 @Entity
 @Table(name = "documents")
 class Document(
+    val documentName: String,
     val documentValue: ByteArray,
     val documentType: String,
     @OneToMany(mappedBy = "document")
