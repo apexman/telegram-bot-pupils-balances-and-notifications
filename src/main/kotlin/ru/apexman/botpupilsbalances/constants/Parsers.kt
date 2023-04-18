@@ -22,8 +22,8 @@ class Parsers {
 
         val BOOLEAN_TO_STRING = { x: Boolean ->
             when (x) {
-                true -> "YES"
-                else -> "NO"
+                true -> "Да"
+                else -> "Нет"
             }
         }
     }

@@ -8,6 +8,7 @@ import ru.apexman.botpupilsbalances.entity.AbstractEntityWithLongKey
 import ru.apexman.botpupilsbalances.entity.Document
 import ru.apexman.botpupilsbalances.entity.contact.Contact
 import ru.apexman.botpupilsbalances.entity.user.Student
+import java.time.LocalDateTime
 
 @Entity
 @Table(name = "pending_balance_payments")
@@ -22,4 +23,6 @@ class PendingBalancePayment(
     @ManyToOne
     @JoinColumn(name = "document_id")
     val document: Document? = null,
+    val disabledAt: LocalDateTime? = null,
+    val disabledBy: String? = null,
 ) : AbstractEntityWithLongKey()

@@ -24,6 +24,7 @@ class PendingBalancePaymentHandler(
     private val pendingBalancePaymentRepository: PendingBalancePaymentRepository,
     private val documentRepository: DocumentRepository,
     private val telegramNotificationService: TelegramNotificationService,
+    private val telegramConfiguration: TelegramConfiguration,
 ) : TelegramMessageHandler, PrivateChatHandler {
 
     private var bot: ThisTelegramBot? = null
@@ -35,7 +36,8 @@ class PendingBalancePaymentHandler(
             bot!!,
             pendingBalancePaymentRepository,
             documentRepository,
-            telegramNotificationService
+            telegramNotificationService,
+            telegramConfiguration,
         )
     }
 

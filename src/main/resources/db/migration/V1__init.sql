@@ -73,7 +73,9 @@ create table if not exists pending_balance_payments
     created_by_contact_id   integer constraint fk_pending_balance_payments_contacts references contacts,
     created_by              varchar not null,
     student_id              integer not null constraint fk_pending_balance_payments_students references students,
-    document_id             integer constraint fk_pending_balance_payments_documents references documents
+    document_id             integer constraint fk_pending_balance_payments_documents references documents,
+    disabled_at             timestamptz,
+    disabled_by             varchar
 );
 
 create table if not exists balance_payments
