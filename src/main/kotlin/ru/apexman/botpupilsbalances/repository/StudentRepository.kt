@@ -22,4 +22,6 @@ interface StudentRepository : JpaRepository<Student, Long> {
     """)
     fun findAllByIsAlarmIsTrueWithActiveAlarmDetails(): List<Student>
 
+    fun findAllByIsPauseIsTrue(): List<Student>
+
 }

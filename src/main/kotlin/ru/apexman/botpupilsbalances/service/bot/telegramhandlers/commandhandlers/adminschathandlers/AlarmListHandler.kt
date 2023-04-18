@@ -43,7 +43,8 @@ class AlarmListHandler(
             .sortedBy { it.fullUserName }
             .map { st ->
                 Pair(st,
-                    "${st.fullUserName}\n" +
+                    "ID: ${st.googleId}\n" +
+                            "${st.fullUserName}\n" +
                             st.alarmDetails
                                 .filter { it.disabledAt == null }
                                 .sortedByDescending { it.createdAt }
