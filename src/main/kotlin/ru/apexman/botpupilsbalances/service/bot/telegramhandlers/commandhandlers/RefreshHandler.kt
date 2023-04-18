@@ -1,8 +1,9 @@
 package ru.apexman.botpupilsbalances.service.bot.telegramhandlers.commandhandlers
 
 import org.springframework.stereotype.Component
-import org.telegram.telegrambots.meta.api.methods.botapimethods.BotApiMethodMessage
+import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
+import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand
 import ru.apexman.botpupilsbalances.service.StudentService
@@ -23,7 +24,7 @@ class RefreshHandler(
         return BotCommand("/refresh", "Обновляет состояние базы данных в соответствии с текущим состоянием таблицы Google, вкладки 'main'")
     }
 
-    override fun handle(update: Update): BotApiMethodMessage {
+    override fun handle(update: Update): PartialBotApiMethod<Message> {
         val operationResult = refreshingFromMainPageService.refreshFromMainPage()
         if (!operationResult.success) {
             return SendMessage.builder()

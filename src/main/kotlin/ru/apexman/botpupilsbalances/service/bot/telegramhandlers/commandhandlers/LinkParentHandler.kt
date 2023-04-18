@@ -1,13 +1,13 @@
 package ru.apexman.botpupilsbalances.service.bot.telegramhandlers.commandhandlers
 
 import org.springframework.stereotype.Component
-import org.telegram.telegrambots.meta.api.methods.botapimethods.BotApiMethodMessage
+import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
+import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand
 import ru.apexman.botpupilsbalances.constants.ContactType
 import ru.apexman.botpupilsbalances.entity.contact.Contact
-import ru.apexman.botpupilsbalances.entity.user.Student
 import ru.apexman.botpupilsbalances.repository.ContactRepository
 import ru.apexman.botpupilsbalances.repository.StudentRepository
 import ru.apexman.botpupilsbalances.service.ContactService
@@ -28,7 +28,7 @@ class LinkParentHandler(
         return BotCommand("/link_parent", "Привязывает телеграм айди пользователя как родителя к указанному ученику")
     }
 
-    override fun handle(update: Update): BotApiMethodMessage {
+    override fun handle(update: Update): PartialBotApiMethod<Message> {
         val args = parseArgs(update)
         if (args.isEmpty()) {
             return SendMessage.builder()

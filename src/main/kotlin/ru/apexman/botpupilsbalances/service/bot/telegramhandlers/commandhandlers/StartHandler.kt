@@ -1,8 +1,9 @@
 package ru.apexman.botpupilsbalances.service.bot.telegramhandlers.commandhandlers
 
 import org.springframework.stereotype.Component
-import org.telegram.telegrambots.meta.api.methods.botapimethods.BotApiMethodMessage
+import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
+import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand
 import ru.apexman.botpupilsbalances.service.bot.telegramhandlers.AdminsChatHandler
@@ -21,7 +22,7 @@ class StartHandler : TelegramMessageHandler, AdminsChatHandler, PrivateChatHandl
         return BotCommand("/start", "Приветственное сообщение")
     }
 
-    override fun handle(update: Update): BotApiMethodMessage {
+    override fun handle(update: Update): PartialBotApiMethod<Message> {
         return SendMessage.builder()
             .chatId(update.message.chatId)
             .text("ЗДЕСЬ ДОЛЖЕН БЫТЬ ТЕКСТ ПРИВЕТСТВЕННОГО СООБЩЕНИЯ И ИНСТРУКЦИЯ ДЛЯ ПОЛЬЗОВАТЕЛЯ О ВЗАИМОДЕЙСТВИИ С БОТОМ")

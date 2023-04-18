@@ -1,13 +1,14 @@
 package ru.apexman.botpupilsbalances.service.bot.telegramhandlers
 
-import org.telegram.telegrambots.meta.api.methods.botapimethods.BotApiMethodMessage
+import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod
+import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand
 import ru.apexman.botpupilsbalances.service.notification.TelegramConfiguration
 
 interface TelegramMessageHandler {
     fun getBotCommand(): BotCommand?
-    fun handle(update: Update): BotApiMethodMessage
+    fun handle(update: Update): PartialBotApiMethod<Message>
     fun canHandle(update: Update, botUsername: String, telegramConfiguration: TelegramConfiguration): Boolean {
         if (update.hasMessage()
             && update.message.hasEntities()

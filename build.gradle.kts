@@ -34,12 +34,14 @@ dependencies {
     implementation("org.apache.commons:commons-lang3:3.12.0")
     implementation("org.telegram:telegrambots-chat-session-bot:6.5.0")
     implementation("org.telegram:telegrambots-spring-boot-starter:6.5.0")
-    //google api
+    //google sheets api
     implementation("com.google.api-client:google-api-client:2.0.0")
     implementation("com.google.oauth-client:google-oauth-client-jetty:1.34.1")
     implementation("com.google.apis:google-api-services-sheets:v4-rev20220927-2.0.0")
     implementation("com.google.auth:google-auth-library-oauth2-http:1.16.1")
-
+    //
+    implementation("com.google.zxing:core:3.5.1")
+    implementation("com.google.zxing:javase:3.5.1")
     runtimeOnly("org.postgresql:postgresql")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.mockito.kotlin:mockito-kotlin:4.0.0")

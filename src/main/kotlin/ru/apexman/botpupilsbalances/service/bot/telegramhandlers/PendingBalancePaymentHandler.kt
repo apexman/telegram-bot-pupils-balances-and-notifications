@@ -1,8 +1,9 @@
 package ru.apexman.botpupilsbalances.service.bot.telegramhandlers
 
 import org.springframework.stereotype.Component
-import org.telegram.telegrambots.meta.api.methods.botapimethods.BotApiMethodMessage
+import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
+import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand
 import ru.apexman.botpupilsbalances.constants.ContactType
@@ -32,7 +33,7 @@ class PendingBalancePaymentHandler(
         return false
     }
 
-    override fun handle(update: Update): BotApiMethodMessage {
+    override fun handle(update: Update): PartialBotApiMethod<Message> {
         val tgId = update.message.from.id
         val contacts =
             contactRepository.findByContactTypeAndContactValue(ContactType.PARENT_ID.name, tgId.toString())

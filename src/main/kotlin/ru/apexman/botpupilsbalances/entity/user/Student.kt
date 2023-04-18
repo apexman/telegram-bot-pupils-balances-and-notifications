@@ -1,6 +1,9 @@
 package ru.apexman.botpupilsbalances.entity.user
 
-import jakarta.persistence.*
+import jakarta.persistence.Column
+import jakarta.persistence.Entity
+import jakarta.persistence.OneToMany
+import jakarta.persistence.Table
 import ru.apexman.botpupilsbalances.constants.Parsers
 import ru.apexman.botpupilsbalances.dto.GooglePullPageRowResponse
 import ru.apexman.botpupilsbalances.entity.AbstractEntityWithLongKey

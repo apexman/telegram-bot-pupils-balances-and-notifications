@@ -1,12 +1,16 @@
 package ru.apexman.botpupilsbalances.service.bot.telegramhandlers.commandhandlers
 
 import org.springframework.stereotype.Component
-import org.telegram.telegrambots.meta.api.methods.botapimethods.BotApiMethodMessage
+import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
+import org.telegram.telegrambots.meta.api.methods.send.SendPhoto
+import org.telegram.telegrambots.meta.api.objects.InputFile
+import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand
 import ru.apexman.botpupilsbalances.constants.ContactType
 import ru.apexman.botpupilsbalances.repository.ContactRepository
+import ru.apexman.botpupilsbalances.service.QRCodeGenerator
 import ru.apexman.botpupilsbalances.service.bot.telegramhandlers.PrivateChatHandler
 import ru.apexman.botpupilsbalances.service.bot.telegramhandlers.TelegramMessageHandler
 
@@ -19,13 +23,14 @@ import ru.apexman.botpupilsbalances.service.bot.telegramhandlers.TelegramMessage
 @Component
 class BalanceHandler(
     private val contactRepository: ContactRepository,
+    private val qrCodeGeneratorService: QRCodeGenerator,
 ) : TelegramMessageHandler, PrivateChatHandler {
 
     override fun getBotCommand(): BotCommand? {
         return BotCommand("/balance", "Количество предоплаченных дней для каждого ребенка")
     }
 
-    override fun handle(update: Update): BotApiMethodMessage {
+    override fun handle(update: Update): PartialBotApiMethod<Message> {
         val tgId = update.message.from.id
         val contactsIfParent =
             contactRepository.findByContactTypeAndContactValue(ContactType.PARENT_ID.name, tgId.toString())
@@ -48,10 +53,18 @@ class BalanceHandler(
                 .text(text)
                 .build()
         }
+
         val text = contactsIfStudent.map { it.student }.joinToString("\n\n") { "${it.fullUserName}: ${it.balance}" }
-        return SendMessage.builder()
+        val bytes = qrCodeGeneratorService.generate("darova ebat'")
+        return SendPhoto.builder()
             .chatId(update.message.chatId)
-            .text(text)
+            .caption(text)
+            .photo(InputFile(bytes.inputStream(), "asdf"))
+            .allowSendingWithoutReply(true)
             .build()
+//        return SendMessage.builder()
+//            .chatId(update.message.chatId)
+//            .text(text)
+//            .build()
     }
 }

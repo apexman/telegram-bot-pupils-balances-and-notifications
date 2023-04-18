@@ -5,8 +5,11 @@ import org.apache.shiro.session.Session
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.bots.DefaultBotOptions
+import org.telegram.telegrambots.meta.api.methods.botapimethods.BotApiMethodMessage
 import org.telegram.telegrambots.meta.api.methods.commands.SetMyCommands
+import org.telegram.telegrambots.meta.api.methods.send.SendDocument
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
+import org.telegram.telegrambots.meta.api.methods.send.SendPhoto
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.api.objects.User
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand
@@ -52,7 +55,12 @@ class ThisTelegramBot(
             }
             for (handler in handlers) {
                 if (handler.canHandle(update, botUsername, telegramConfiguration)) {
-                    execute(handler.handle(update))
+                    when (val apiMethod = handler.handle(update)) {
+                        is BotApiMethodMessage -> execute(apiMethod)
+                        is SendPhoto -> execute(apiMethod)
+                        is SendDocument -> execute(apiMethod)
+                        else -> throw RuntimeException("Unhandled response type: ${apiMethod.javaClass.name}")
+                    }
                     logger.debug("Handled by ${handler.javaClass.name}")
                     return
                 }
