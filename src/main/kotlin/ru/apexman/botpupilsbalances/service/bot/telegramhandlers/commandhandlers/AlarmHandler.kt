@@ -6,16 +6,17 @@ import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod
 import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand
+import ru.apexman.botpupilsbalances.service.bot.telegramhandlers.AdminsChatHandler
 import ru.apexman.botpupilsbalances.service.bot.telegramhandlers.TelegramMessageHandler
 
 @Component
-class AlarmHandler: TelegramMessageHandler {
+class AlarmHandler: TelegramMessageHandler, AdminsChatHandler {
 
     override fun getBotCommand(): BotCommand? {
         return BotCommand("/alarm", "Get some alarm")
     }
 
-    override fun handle(update: Update, botSession: Session?): PartialBotApiMethod<Message> {
+    override fun handle(update: Update, botSession: Session?): Collection<PartialBotApiMethod<Message>> {
         TODO("implement")
     }
 }

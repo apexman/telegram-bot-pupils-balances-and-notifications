@@ -17,7 +17,7 @@ abstract class AbstractSheetsService {
         //спускаемся до таблицы со значениями
         for (rawValue in values) {
             if (rawValue is ArrayList<*>) {
-                val valueRange = rawValue[0]
+                val valueRange = rawValue.getOrNull(0)
                 if (valueRange is ValueRange) {
                     @Suppress("UNCHECKED_CAST")
                     return valueRange.getValue("values") as List<List<Any>>

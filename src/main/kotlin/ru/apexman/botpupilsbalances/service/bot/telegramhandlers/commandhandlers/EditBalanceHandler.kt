@@ -25,27 +25,27 @@ class EditBalanceHandler(
         return BotCommand("/edit_balance", "Обновляет количество дней")
     }
 
-    override fun handle(update: Update, botSession: Session?): PartialBotApiMethod<Message> {
+    override fun handle(update: Update, botSession: Session?): Collection<PartialBotApiMethod<Message>> {
         val args = parseArgs(update)
         if (args.isEmpty() || args.size < 2 || args[1].toIntOrNull() == null) {
-            return SendMessage.builder()
+            return listOf(SendMessage.builder()
                 .chatId(update.message.chatId)
                 .text("Использование: /edit_balance <id> <balance>")
-                .build()
+                .build())
         }
         val googleId = args[0]
         val student = studentRepository.findByGoogleId(googleId)
-            ?: return SendMessage.builder()
+            ?: return listOf(SendMessage.builder()
                 .chatId(update.message.chatId)
                 .text("Ученик не найден")
-                .build()
+                .build())
         val balance = args[1].toInt()
         paymentService.createNewBalance(student, balance, getCommandRequester(update))
         student.balance = balance
         studentRepository.save(student)
-        return SendMessage.builder()
+        return listOf(SendMessage.builder()
             .chatId(update.message.chatId)
             .text("Установлен новый баланс: $balance")
-            .build()
+            .build())
     }
 }

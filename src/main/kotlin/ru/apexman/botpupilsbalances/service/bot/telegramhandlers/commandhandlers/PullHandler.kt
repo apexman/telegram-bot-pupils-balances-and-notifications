@@ -26,18 +26,18 @@ class PullHandler(
     override fun getBotCommand(): BotCommand? {
         return BotCommand("/pull", "Загрузить новых учеников")
     }
-    override fun handle(update: Update, botSession: Session?): PartialBotApiMethod<Message> {
+    override fun handle(update: Update, botSession: Session?): Collection<PartialBotApiMethod<Message>> {
         val operationResult = pullPageService.readPullPage()
         if (!operationResult.success) {
-            return SendMessage.builder()
+            return listOf(SendMessage.builder()
                 .chatId(update.message.chatId)
                 .text("Возникли ошибки, загрузка прервана:\n\n" + operationResult.errors.joinToString("\n\n"))
-                .build()
+                .build())
         }
         val students = studentService.createNewStudents(operationResult.result)
-        return SendMessage.builder()
+        return listOf(SendMessage.builder()
             .chatId(update.message.chatId)
             .text("Количество загруженных учеников: ${students.size}")
-            .build()
+            .build())
     }
 }

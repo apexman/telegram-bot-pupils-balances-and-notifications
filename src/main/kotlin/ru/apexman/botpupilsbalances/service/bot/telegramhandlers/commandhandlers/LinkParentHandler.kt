@@ -29,20 +29,20 @@ class LinkParentHandler(
         return BotCommand("/link_parent", "Привязывает телеграм айди пользователя как родителя к указанному ученику")
     }
 
-    override fun handle(update: Update, botSession: Session?): PartialBotApiMethod<Message> {
+    override fun handle(update: Update, botSession: Session?): Collection<PartialBotApiMethod<Message>> {
         val args = parseArgs(update)
         if (args.isEmpty()) {
-            return SendMessage.builder()
+            return listOf(SendMessage.builder()
                 .chatId(update.message.chatId)
                 .text("Использование: /link_parent <public_id>")
-                .build()
+                .build())
         }
         val publicId = args[0]
         val student = (studentRepository.findByPublicId(publicId)
-            ?: return SendMessage.builder()
+            ?: return listOf(SendMessage.builder()
                 .chatId(update.message.chatId)
                 .text("Ученик с таким public_id не найден")
-                .build())
+                .build()))
         val parentTgId: Long = update.message.from.id
         val parentTgUserName: String? = update.message.from.userName
         val savingContacts = mutableListOf<Contact>()
@@ -52,10 +52,10 @@ class LinkParentHandler(
             savingContacts.add(contactService.buildContact(student, ContactType.CHILD_TELEGRAM_USERNAME, parentTgUserName))
         }
         contactRepository.saveAll(savingContacts)
-        return SendMessage.builder()
+        return listOf(SendMessage.builder()
             .chatId(update.message.chatId)
             .text("ВЫ ЗАПИСАНЫ РОДИТЕЛЕМ УЧЕНИКА(ЦЫ) ${student.fullUserName}")
-            .build()
+            .build())
     }
 
 }

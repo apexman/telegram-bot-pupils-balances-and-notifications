@@ -17,7 +17,6 @@ import ru.apexman.botpupilsbalances.entity.user.Student
 import ru.apexman.botpupilsbalances.entity.userdetails.AlarmDetails
 import ru.apexman.botpupilsbalances.entity.userdetails.Comment
 import ru.apexman.botpupilsbalances.repository.*
-import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -39,6 +38,7 @@ class StudentService(
 ) {
     private val logger = LoggerFactory.getLogger(StudentService::class.java)
 
+    //TODO: remove
     @PostConstruct
     fun test() {
         val students = studentRepository.findAll()

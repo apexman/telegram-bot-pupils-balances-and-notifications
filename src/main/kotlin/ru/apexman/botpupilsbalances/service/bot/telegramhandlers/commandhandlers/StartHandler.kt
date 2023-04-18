@@ -21,10 +21,10 @@ class StartHandler : TelegramMessageHandler, PrivateChatHandler {
         return BotCommand("/start", "Приветственное сообщение")
     }
 
-    override fun handle(update: Update, botSession: Session?): PartialBotApiMethod<Message> {
-        return SendMessage.builder()
+    override fun handle(update: Update, botSession: Session?): Collection<PartialBotApiMethod<Message>> {
+        return listOf(SendMessage.builder()
             .chatId(update.message.chatId)
             .text("ЗДЕСЬ ДОЛЖЕН БЫТЬ ТЕКСТ ПРИВЕТСТВЕННОГО СООБЩЕНИЯ И ИНСТРУКЦИЯ ДЛЯ ПОЛЬЗОВАТЕЛЯ О ВЗАИМОДЕЙСТВИИ С БОТОМ")
-            .build()
+            .build())
     }
 }

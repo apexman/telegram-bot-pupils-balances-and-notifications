@@ -32,28 +32,28 @@ class BalanceHandler(
         return BotCommand("/balance", "Количество предоплаченных дней для каждого ребенка")
     }
 
-    override fun handle(update: Update, botSession: Session?): PartialBotApiMethod<Message> {
+    override fun handle(update: Update, botSession: Session?): Collection<PartialBotApiMethod<Message>> {
         val tgId = update.message.from.id
         val contactsIfParent =
             contactRepository.findByContactTypeAndContactValue(ContactType.PARENT_ID.name, tgId.toString())
         val contactsIfStudent =
             contactRepository.findByContactTypeAndContactValue(ContactType.CHILD_ID.name, tgId.toString())
         if (contactsIfParent.isEmpty() && contactsIfStudent.isEmpty()) {
-            return SendMessage.builder()
+            return listOf(SendMessage.builder()
                 .chatId(update.message.chatId)
                 .text(
                     "Ваш аккаунт не привязан ни к одному ученику.\n " +
                             "Если вы родитель, то выполните команду /link_parent <public_id>\n" +
                             "Если вы ученик, то выполните команду /link_child <public_id>"
                 )
-                .build()
+                .build())
         }
         if (contactsIfParent.isNotEmpty()) {
             val text = contactsIfParent.map { it.student }.joinToString("\n\n") { "${it.fullUserName}: ${it.balance}" }
-            return SendMessage.builder()
+            return listOf(SendMessage.builder()
                 .chatId(update.message.chatId)
                 .text(text)
-                .build()
+                .build())
         }
         if (contactsIfStudent.size > 1) {
             //TODO: change relations
@@ -66,11 +66,11 @@ class BalanceHandler(
         } else {
             qrCodeGeneratorService.generate("${student.fullUserName} FORBIDDEN ${LocalDateTime.now()}", QRCodeGenerator.RED)
         }
-        return SendPhoto.builder()
+        return listOf(SendPhoto.builder()
             .chatId(update.message.chatId)
             .caption("${student.fullUserName}: ${student.balance}")
             .photo(InputFile(bytes.inputStream(), "${student.fullUserName}-${LocalDateTime.now()}.png"))
             .allowSendingWithoutReply(true)
-            .build()
+            .build())
     }
 }

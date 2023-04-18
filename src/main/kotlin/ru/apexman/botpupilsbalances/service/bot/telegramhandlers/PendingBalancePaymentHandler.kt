@@ -46,56 +46,60 @@ class PendingBalancePaymentHandler(
         return null
     }
 
-    override fun canHandle(update: Update, botSession: Session?, botUsername: String, telegramConfiguration: TelegramConfiguration): Boolean {
+    override fun canHandle(
+        update: Update,
+        botSession: Session?,
+        botUsername: String,
+        telegramConfiguration: TelegramConfiguration,
+    ): Boolean {
         if (update.hasMessage()) {
             return checkPermissions(update, botUsername, telegramConfiguration)
-                    && (update.message.hasPhoto()
-                    || update.message.hasDocument())
+                    && (update.message.hasPhoto() || update.message.hasDocument())
         }
         return false
     }
 
-    override fun handle(update: Update, botSession: Session?): PartialBotApiMethod<Message> {
+    override fun handle(update: Update, botSession: Session?): Collection<PartialBotApiMethod<Message>> {
         val args = parseArgs(update)
         if (args.isEmpty()) {
-            return SendMessage.builder()
+            return listOf(SendMessage.builder()
                 .chatId(update.message.chatId)
                 .text("Использование: отправляет скриншот/документ квитанции об оплате с комментарием <public_id> ученика")
-                .build()
+                .build())
         }
         val tgId = update.message.from.id
         val contacts =
             contactRepository.findByContactTypeAndContactValue(ContactType.PARENT_ID.name, tgId.toString())
         if (contacts.isEmpty()) {
-            return SendMessage.builder()
+            return listOf(SendMessage.builder()
                 .chatId(update.message.chatId)
                 .text(
                     "По вашему аккаунту не найден ни один ученик. " +
                             "Выполните команду /link_parent <public_id> для привязки вашего телеграм айди как родителя к ученику"
                 )
-                .build()
+                .build())
         }
         val publicId = args[0]
         val contact = (contacts.find { it.student.publicId == publicId }
-            ?: return SendMessage.builder()
+            ?: return listOf(SendMessage.builder()
                 .chatId(update.message.chatId)
                 .text("К вашему аккаунту не привязан ученик с таким public_id")
-                .build())
+                .build()))
 
         if (update.message.document != null) {
             telegramFilesService!!.saveDocument(update, update.message.document, contact, getCommandRequester(update))
         } else if (update.message.photo != null && update.message.photo.isNotEmpty()) {
             telegramFilesService!!.savePhoto(update, update.message.photo, contact, getCommandRequester(update))
         } else {
-            return SendMessage.builder()
+            return listOf(SendMessage.builder()
                 .chatId(update.message.chatId)
                 .text("Использование: отправляет скриншот/документ квитанции об оплате с комментарием <public_id> ученика")
-                .build()
+                .build())
         }
-        return SendMessage.builder()
+        return listOf(SendMessage.builder()
             .chatId(update.message.chatId)
             //todo: change text
             .text("ЗДЕСЬ ДОЛЖЕН БЫТЬ ТЕКСТ БЛАГОДАРНОСТИ ЗА ОПЛАТУ")
-            .build()
+            .build())
     }
 }

@@ -16,7 +16,7 @@ class AddHandler : TelegramMessageHandler, AdminsChatHandler {
         return BotCommand("/add", "Get some add")
     }
 
-    override fun handle(update: Update, botSession: Session?): PartialBotApiMethod<Message> {
+    override fun handle(update: Update, botSession: Session?): Collection<PartialBotApiMethod<Message>> {
         TODO("implement")
     }
 }

@@ -57,12 +57,15 @@ class ThisTelegramBot(
             }
             for (handler in handlers) {
                 if (handler.canHandle(update, botSession, botUsername, telegramConfiguration)) {
-                    //todo: handle async
-                    when (val apiMethod = handler.handle(update, botSession)) {
-                        is BotApiMethodMessage -> execute(apiMethod)
-                        is SendPhoto -> execute(apiMethod)
-                        is SendDocument -> execute(apiMethod)
-                        else -> throw RuntimeException("Unhandled response type: ${apiMethod.javaClass.name}")
+                    //todo: implement async
+                    val apiMethods = handler.handle(update, botSession)
+                    for (apiMethod in apiMethods) {
+                        when (apiMethod) {
+                            is BotApiMethodMessage -> execute(apiMethod)
+                            is SendPhoto -> execute(apiMethod)
+                            is SendDocument -> execute(apiMethod)
+                            else -> throw RuntimeException("Unhandled response type: ${apiMethod.javaClass.name}")
+                        }
                     }
                     logger.debug("Handled by ${handler.javaClass.name}")
                     return

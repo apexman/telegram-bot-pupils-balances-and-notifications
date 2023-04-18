@@ -16,7 +16,7 @@ class PauseListHandler: TelegramMessageHandler, AdminsChatHandler {
         return BotCommand("/pause_list", "Get some pause_list")
     }
 
-    override fun handle(update: Update, botSession: Session?): PartialBotApiMethod<Message> {
+    override fun handle(update: Update, botSession: Session?): Collection<PartialBotApiMethod<Message>> {
         TODO("implement")
     }
 }

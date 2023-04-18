@@ -29,20 +29,20 @@ class LinkChildHandler(
         return BotCommand("/link_child", "Привязывает телеграм айди ученика")
     }
 
-    override fun handle(update: Update, botSession: Session?): PartialBotApiMethod<Message> {
+    override fun handle(update: Update, botSession: Session?): Collection<PartialBotApiMethod<Message>> {
         val args = parseArgs(update)
         if (args.isEmpty()) {
-            return SendMessage.builder()
+            return listOf(SendMessage.builder()
                 .chatId(update.message.chatId)
                 .text("Использование: /link_child <public_id>")
-                .build()
+                .build())
         }
         val publicId = args[0]
         val student = (studentRepository.findByPublicId(publicId)
-            ?: return SendMessage.builder()
+            ?: return listOf(SendMessage.builder()
                 .chatId(update.message.chatId)
                 .text("Ученик с таким public_id не найден")
-                .build())
+                .build()))
         val childTgId: Long = update.message.from.id
         val childTgUserName: String? = update.message.from.userName
         val savingContacts = mutableListOf<Contact>()
@@ -52,10 +52,10 @@ class LinkChildHandler(
             savingContacts.add(contactService.buildContact(student, ContactType.CHILD_TELEGRAM_USERNAME, childTgUserName))
         }
         contactRepository.saveAll(savingContacts)
-        return SendMessage.builder()
+        return listOf(SendMessage.builder()
             .chatId(update.message.chatId)
             .text("${student.fullUserName}, ВЫ ЗАПИСАНЫ НАШИМ УЧЕНИКОМ")
-            .build()
+            .build())
     }
 
 }

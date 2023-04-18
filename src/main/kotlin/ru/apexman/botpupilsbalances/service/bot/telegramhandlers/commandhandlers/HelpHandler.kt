@@ -33,11 +33,11 @@ class HelpHandler(
         return BotCommand("/help", "Инструкция по взаимодействию с ботом")
     }
 
-    override fun handle(update: Update, botSession: Session?): PartialBotApiMethod<Message> {
+    override fun handle(update: Update, botSession: Session?): Collection<PartialBotApiMethod<Message>> {
         val joinToString = commands.joinToString("\n") { "${it.command} - ${it.description}" }
-        return SendMessage.builder()
+        return listOf(SendMessage.builder()
             .chatId(update.message.chatId)
             .text("Список команд, доступные в чате администратора\n\n$joinToString")
-            .build()
+            .build())
     }
 }

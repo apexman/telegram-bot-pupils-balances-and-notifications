@@ -88,7 +88,7 @@ class RefreshingFromMainPageService(
             "Имя не заполнено")
         val birthday = parse(values.getOrNull(3), this::parseDate, errors,
             "Неправильный формат даты дня рождения '${values.getOrNull(3)}', ожидался формат: ${Parsers.DATE_PATTERN}")
-        val age = values[4]//ignore
+        val age = values.getOrNull(4)//ignore
         val dateEnrollment = parse(values.getOrNull(5), this::parseDate, errors,
             "Неправильный формат даты вступления '${values.getOrNull(5)}', ожидался формат: ${Parsers.DATE_PATTERN}")
         val classNum = parse(values.getOrNull(6), this::parseInt, errors,

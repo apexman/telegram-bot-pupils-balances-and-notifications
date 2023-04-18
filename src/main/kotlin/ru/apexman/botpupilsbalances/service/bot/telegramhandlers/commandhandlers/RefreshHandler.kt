@@ -25,18 +25,18 @@ class RefreshHandler(
         return BotCommand("/refresh", "Обновляет состояние базы данных в соответствии с текущим состоянием таблицы Google, вкладки 'main'")
     }
 
-    override fun handle(update: Update, botSession: Session?): PartialBotApiMethod<Message> {
+    override fun handle(update: Update, botSession: Session?): Collection<PartialBotApiMethod<Message>> {
         val operationResult = refreshingFromMainPageService.refreshFromMainPage()
         if (!operationResult.success) {
-            return SendMessage.builder()
+            return listOf(SendMessage.builder()
                 .chatId(update.message.chatId)
                 .text("Возникли ошибки, обновление данных прервано:\n\n" + operationResult.errors.joinToString("\n\n"))
-                .build()
+                .build())
         }
         val students = studentService.updateStudents(operationResult.result, getCommandRequester(update))
-        return SendMessage.builder()
+        return listOf(SendMessage.builder()
             .chatId(update.message.chatId)
             .text("Количество обновленных учеников: ${students.size}")
-            .build()
+            .build())
     }
 }

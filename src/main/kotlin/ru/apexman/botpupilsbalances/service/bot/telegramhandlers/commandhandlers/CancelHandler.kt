@@ -16,7 +16,7 @@ class CancelHandler: TelegramMessageHandler, AdminsChatHandler {
         return BotCommand("/cancel", "Get some cancel")
     }
 
-    override fun handle(update: Update, botSession: Session?): PartialBotApiMethod<Message> {
+    override fun handle(update: Update, botSession: Session?): Collection<PartialBotApiMethod<Message>> {
         TODO("implement")
     }
 }

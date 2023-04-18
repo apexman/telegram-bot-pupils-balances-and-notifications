@@ -9,8 +9,13 @@ import ru.apexman.botpupilsbalances.service.notification.TelegramConfiguration
 
 interface TelegramMessageHandler {
     fun getBotCommand(): BotCommand?
-    fun handle(update: Update, botSession: Session?): PartialBotApiMethod<Message>
-    fun canHandle(update: Update, botSession: Session?, botUsername: String, telegramConfiguration: TelegramConfiguration): Boolean {
+    fun handle(update: Update, botSession: Session?): Collection<PartialBotApiMethod<Message>>
+    fun canHandle(
+        update: Update,
+        botSession: Session?,
+        botUsername: String,
+        telegramConfiguration: TelegramConfiguration,
+    ): Boolean {
         if (update.hasMessage()
             && update.message.hasEntities()
             && update.message.entities[0].type == "bot_command"
@@ -20,7 +25,7 @@ interface TelegramMessageHandler {
             val commandFullName = update.message.text.subSequence(0, update.message.entities[0].length)
             val commandParts = commandFullName.split("@").toMutableList()
             commandParts.add(botUsername)
-            if (commandParts[1] == botUsername
+            if (commandParts.getOrNull(1) == botUsername
                 && parseCommand(update) == getBotCommand()?.command
             ) {
                 return checkPermissions(update, botUsername, telegramConfiguration)

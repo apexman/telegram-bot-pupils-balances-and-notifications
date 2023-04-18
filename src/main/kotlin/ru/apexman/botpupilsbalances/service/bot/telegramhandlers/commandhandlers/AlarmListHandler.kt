@@ -9,14 +9,17 @@ import org.telegram.telegrambots.meta.api.objects.commands.BotCommand
 import ru.apexman.botpupilsbalances.service.bot.telegramhandlers.AdminsChatHandler
 import ru.apexman.botpupilsbalances.service.bot.telegramhandlers.TelegramMessageHandler
 
+/**
+ * Выводит список учеников с активным ALARM
+ */
 @Component
 class AlarmListHandler: TelegramMessageHandler, AdminsChatHandler {
 
     override fun getBotCommand(): BotCommand? {
-        return BotCommand("/alarm_list", "Get some alarm_list")
+        return BotCommand("/alarm_list", "Выводит список учеников с активным ALARM")
     }
 
-    override fun handle(update: Update, botSession: Session?): PartialBotApiMethod<Message> {
+    override fun handle(update: Update, botSession: Session?): Collection<PartialBotApiMethod<Message>> {
         TODO("implement")
     }
 }

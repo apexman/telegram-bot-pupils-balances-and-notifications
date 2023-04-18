@@ -23,17 +23,17 @@ class PushHandler(
         return BotCommand("/push", "Отправка актуального состояния бд на страницу 'main'")
     }
 
-    override fun handle(update: Update, botSession: Session?): PartialBotApiMethod<Message> {
+    override fun handle(update: Update, botSession: Session?): Collection<PartialBotApiMethod<Message>> {
         val operationResult = pushingToMainPageService.pushToMainPage()
         if (!operationResult.success) {
-            return SendMessage.builder()
+            return listOf(SendMessage.builder()
                 .chatId(update.message.chatId)
                 .text("Возникли ошибки, выгрузка прервана:\n\n" + operationResult.errors.joinToString("\n\n"))
-                .build()
+                .build())
         }
-        return SendMessage.builder()
+        return listOf(SendMessage.builder()
             .chatId(update.message.chatId)
             .text("Количество выгруженных учеников: ${operationResult.result}")
-            .build()
+            .build())
     }
 }

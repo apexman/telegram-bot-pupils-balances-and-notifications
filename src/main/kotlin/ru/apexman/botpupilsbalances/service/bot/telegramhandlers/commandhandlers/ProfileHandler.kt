@@ -30,20 +30,20 @@ class ProfileHandler(
         return BotCommand("/profile", "Присылает подробную информацию об ученике со всеми деталями")
     }
 
-    override fun handle(update: Update, botSession: Session?): PartialBotApiMethod<Message> {
+    override fun handle(update: Update, botSession: Session?): Collection<PartialBotApiMethod<Message>> {
         val args = parseArgs(update)
         if (args.isEmpty()) {
-            return SendMessage.builder()
+            return listOf(SendMessage.builder()
                 .chatId(update.message.chatId)
                 .text("Использование: /profile <id>")
-                .build()
+                .build())
         }
         val googleId = args[0]
         val student = (studentRepository.findByGoogleId(googleId)
-            ?: return SendMessage.builder()
+            ?: return listOf(SendMessage.builder()
                 .chatId(update.message.chatId)
                 .text("Ученик не найден")
-                .build())
+                .build()))
         val hasPendingBalancePayments =
             pendingBalancePaymentRepository.findFirstByStudentAndDisabledAtIsNotNullOrderByCreatedAtDesc(student) != null
         val lastComment = commentRepository.findFirstByStudentOrderByCreatedAtDesc(student)?.comment ?: ""
@@ -79,9 +79,9 @@ class ProfileHandler(
               Tg id ученика: $childTgIds
         """.trimIndent()
 
-        return SendMessage.builder()
+        return listOf(SendMessage.builder()
             .chatId(update.message.chatId)
             .text(text)
-            .build()
+            .build())
     }
 }

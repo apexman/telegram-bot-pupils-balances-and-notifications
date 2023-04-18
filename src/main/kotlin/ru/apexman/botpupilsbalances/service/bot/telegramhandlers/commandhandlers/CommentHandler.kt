@@ -16,7 +16,7 @@ class CommentHandler : TelegramMessageHandler, AdminsChatHandler {
         return BotCommand("/comment", "Get some comment")
     }
 
-    override fun handle(update: Update, botSession: Session?): PartialBotApiMethod<Message> {
+    override fun handle(update: Update, botSession: Session?): Collection<PartialBotApiMethod<Message>> {
         TODO("implement")
     }
 }
