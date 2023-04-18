@@ -1,0 +1,25 @@
+spring:
+  datasource:
+    url: MOCK
+    username: MOCK
+    password: MOCK
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        default_schema: testing_telegram_bot_payments_informing_schema
+  flyway:
+    default-schema: testing_telegram_bot_payments_informing_schema
+
+telegram:
+  enabled: true
+  telegram-api-url: MOCK
+  token: MOCK
+  is-monitoring: true
+  monitoring-chat-id: 123
+  collecting-receipts-chat-id: 123
+  admins-chat-id: 123
+
+logging:
+  level:
+    ru.apexman: DEBUG

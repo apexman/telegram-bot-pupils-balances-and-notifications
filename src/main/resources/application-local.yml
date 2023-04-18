@@ -1,0 +1,30 @@
+spring:
+  datasource:
+    url: "jdbc:postgresql://localhost:5432/telegram_bot_payments_informing"
+    username: "postgres"
+    password: "postgres"
+  jpa:
+    open-in-view: false
+    show-sql: true
+    properties:
+      hibernate:
+        default_schema: telegram_bot_payments_informing_schema
+  flyway:
+    default-schema: telegram_bot_payments_informing_schema
+
+telegram:
+  telegram-api-url: https://api.telegram.org
+  token: ${TOKEN}
+  is-monitoring: ${IS_MONITORING1:true}
+  monitoring-chat-id: ${MONITORING_CHAT_ID}
+  collecting-receipts-chat-id: ${COLLECTING_RECEIPTS_CHAT_ID}
+  admins-chat-id: ${ADMINS_CHAT_ID}
+
+google-sheets:
+  sheet-id: ${GOOGLE_SHEET_ID}
+  main-table-name: main
+  pull-table-name: pull
+
+logging:
+  level:
+    ru.apexman: TRACE

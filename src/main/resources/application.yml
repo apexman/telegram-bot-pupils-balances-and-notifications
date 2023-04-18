@@ -1,0 +1,15 @@
+server:
+  port: ${PORT:8080}
+
+spring:
+  profiles:
+    active: local
+  data:
+    web:
+      pageable:
+        size-parameter: limit
+        one-indexed-parameters: true
+
+logging:
+  level:
+    org.springframework.web.filter.CommonsRequestLoggingFilter: DEBUG
