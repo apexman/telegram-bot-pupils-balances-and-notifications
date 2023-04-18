@@ -69,7 +69,8 @@ create table if not exists pending_balance_payments
     id                      serial primary key,
     created_at              timestamptz not null,
     last_modified_at        timestamptz not null,
-    created_by_contact_id   integer not null constraint fk_pending_balance_payments_contacts references contacts,
+    created_by_contact_id   integer constraint fk_pending_balance_payments_contacts references contacts,
+    created_by              varchar not null,
     student_id              integer not null constraint fk_pending_balance_payments_students references students,
     document_id             integer constraint fk_pending_balance_payments_documents references documents
 );
@@ -79,10 +80,11 @@ create table if not exists balance_payments
     id                      serial primary key,
     created_at              timestamptz not null,
     last_modified_at        timestamptz not null,
-    created_by_contact_id   integer not null constraint fk_balance_payments_contacts references contacts,
+    created_by_contact_id   integer constraint fk_balance_payments_contacts references contacts,
+    created_by              varchar not null,
     student_id              integer not null constraint fk_balance_payments_students references students,
     document_id             integer constraint fk_balance_payments_documents references documents,
-    balance                 integer not null,
+    delta                   integer not null,
     approved_by             varchar not null,
     comment                 varchar
 );
@@ -93,7 +95,7 @@ create table if not exists penalties
     created_at       timestamptz not null,
     last_modified_at timestamptz not null,
     student_id       integer not null constraint fk_penalties_students references students,
-    amount           numeric(24, 4) not null,
+    delta            numeric(24, 4) not null,
     currency_name    varchar not null,
-    created_by       varchar
+    created_by       varchar not null
 );

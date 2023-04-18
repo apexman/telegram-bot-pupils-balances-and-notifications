@@ -10,6 +10,7 @@ import ru.apexman.botpupilsbalances.entity.contact.Contact
 import ru.apexman.botpupilsbalances.entity.user.Student
 import ru.apexman.botpupilsbalances.repository.ContactRepository
 import ru.apexman.botpupilsbalances.repository.StudentRepository
+import ru.apexman.botpupilsbalances.service.ContactService
 import ru.apexman.botpupilsbalances.service.bot.telegramhandlers.PrivateChatHandler
 import ru.apexman.botpupilsbalances.service.bot.telegramhandlers.TelegramMessageHandler
 
@@ -20,6 +21,7 @@ import ru.apexman.botpupilsbalances.service.bot.telegramhandlers.TelegramMessage
 class LinkParentHandler(
     private val studentRepository: StudentRepository,
     private val contactRepository: ContactRepository,
+    private val contactService: ContactService,
 ) : TelegramMessageHandler, PrivateChatHandler {
 
     override fun getBotCommand(): BotCommand? {
@@ -35,7 +37,7 @@ class LinkParentHandler(
                 .build()
         }
         val publicId = args[0]
-        val linkingToChild = (studentRepository.findByPublicId(publicId)
+        val student = (studentRepository.findByPublicId(publicId)
             ?: return SendMessage.builder()
                 .chatId(update.message.chatId)
                 .text("Ученик с таким public_id не найден")
@@ -43,50 +45,16 @@ class LinkParentHandler(
         val parentTgId: Long = update.message.from.id
         val parentTgUserName: String? = update.message.from.userName
         val savingContacts = mutableListOf<Contact>()
-        val contacts = contactRepository.findAllByStudent(linkingToChild)
-        savingContacts.add(buildTgIdContact(contacts, linkingToChild, parentTgId))
-        savingContacts.add(buildTgChatIdContact(contacts, linkingToChild, update))
+        savingContacts.add(contactService.buildContact(student, ContactType.PARENT_ID, parentTgId.toString()))
+        savingContacts.add(contactService.buildContact(student, ContactType.PARENT_CHAT_ID, update.message.chatId.toString()))
         if (parentTgUserName != null) {
-            savingContacts.add(buildTgUserNameContact(contacts, linkingToChild, parentTgUserName))
+            savingContacts.add(contactService.buildContact(student, ContactType.CHILD_TELEGRAM_USERNAME, parentTgUserName))
         }
         contactRepository.saveAll(savingContacts)
         return SendMessage.builder()
             .chatId(update.message.chatId)
-            .text("ВЫ ЗАПИСАНЫ РОДИТЕЛЕМ УЧЕНИКА(ЦЫ) ${linkingToChild.fullUserName}")
+            .text("ВЫ ЗАПИСАНЫ РОДИТЕЛЕМ УЧЕНИКА(ЦЫ) ${student.fullUserName}")
             .build()
     }
 
-    private fun buildTgIdContact(
-        contacts: List<Contact>,
-        student: Student,
-        parentTgId: Long,
-    ): Contact {
-        val parentTgIdContact = (contacts.find { it.contactType == ContactType.PARENT_ID.name }
-            ?: Contact(student, ContactType.PARENT_ID.name, parentTgId.toString()))
-        parentTgIdContact.contactValue = parentTgId.toString()
-        return parentTgIdContact
-    }
-
-    private fun buildTgChatIdContact(
-        contacts: List<Contact>,
-        student: Student,
-        update: Update,
-    ): Contact {
-        val parentTgChatIdContact = contacts.find { it.contactType == ContactType.PARENT_CHAT_ID.name }
-            ?: Contact(student, ContactType.PARENT_CHAT_ID.name, update.message.chatId.toString())
-        parentTgChatIdContact.contactValue = update.message.chatId.toString()
-        return parentTgChatIdContact
-    }
-
-    private fun buildTgUserNameContact(
-        contacts: List<Contact>,
-        student: Student,
-        parentTgUserName: String,
-    ): Contact {
-        val parentTgUserNameContact =
-            contacts.find { it.contactType == ContactType.PARENT_TELEGRAM_USERNAME.name }
-                ?: Contact(student, ContactType.PARENT_TELEGRAM_USERNAME.name, parentTgUserName)
-        parentTgUserNameContact.contactValue = parentTgUserName
-        return parentTgUserNameContact
-    }
 }

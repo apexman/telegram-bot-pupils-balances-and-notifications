@@ -11,11 +11,13 @@ import ru.apexman.botpupilsbalances.dto.GoogleMainPageRowRequest
 import ru.apexman.botpupilsbalances.dto.GoogleMainPageRowResponse
 import ru.apexman.botpupilsbalances.dto.GooglePullPageRowResponse
 import ru.apexman.botpupilsbalances.entity.contact.Contact
+import ru.apexman.botpupilsbalances.entity.payment.BalancePayment
+import ru.apexman.botpupilsbalances.entity.payment.Penalty
 import ru.apexman.botpupilsbalances.entity.user.Student
 import ru.apexman.botpupilsbalances.entity.userdetails.AlarmDetails
 import ru.apexman.botpupilsbalances.entity.userdetails.Comment
 import ru.apexman.botpupilsbalances.repository.*
-import ru.apexman.botpupilsbalances.service.notification.TelegramNotificationService
+import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -27,10 +29,12 @@ import kotlin.random.Random
 @Service
 class StudentService(
     private val studentRepository: StudentRepository,
-    private val telegramNotificationService: TelegramNotificationService,
     private val commentRepository: CommentRepository,
     private val alarmDetailsRepository: AlarmDetailsRepository,
     private val contactRepository: ContactRepository,
+    private val balancePaymentRepository: BalancePaymentRepository,
+    private val penaltyRepository: PenaltyRepository,
+    private val contactService: ContactService,
 ) {
     private val logger = LoggerFactory.getLogger(StudentService::class.java)
 
@@ -87,10 +91,15 @@ class StudentService(
         val students = mutableListOf<Student>()
         val comments = mutableListOf<Comment>()
         val alarmDetailsList = mutableListOf<AlarmDetails>()
+        val balances = mutableListOf<BalancePayment>()
+        val penalties = mutableListOf<Penalty>()
+        val contacts = mutableListOf<Contact>()
         for (pageRow in pageRows) {
             val student = studentRepository.findByGoogleId(pageRow.googleId) ?: continue
             updateSimple(pageRow, student)
-            updateTgIds(pageRow, student)
+            updateBalance(pageRow, student, modifiedBy, balances)
+            updatePenalty(pageRow, student, modifiedBy, penalties)
+            updateTgIds(pageRow, student, contacts)
             updateComments(pageRow, student, modifiedBy, comments)
             updateAlarm(pageRow, student, modifiedBy, alarmDetailsList)
             students.add(student)
@@ -98,6 +107,9 @@ class StudentService(
         studentRepository.saveAll(students)
         commentRepository.saveAll(comments)
         alarmDetailsRepository.saveAll(alarmDetailsList)
+        balancePaymentRepository.saveAll(balances)
+        penaltyRepository.saveAll(penalties)
+        contactRepository.saveAll(contacts)
         return students
     }
 
@@ -112,29 +124,72 @@ class StudentService(
         student.classNum = pageRow.classNum
         student.isHostel = pageRow.hostel
         student.discount = pageRow.discount
+        //TODO: handle price changing
         student.price = pageRow.price
         student.currencyName = pageRow.currency
-        student.balance = pageRow.balance
         student.isPause = pageRow.pause
+    }
+
+    private fun updateBalance(
+        pageRow: GoogleMainPageRowResponse,
+        student: Student,
+        modifiedBy: String,
+        balances: MutableList<BalancePayment>,
+    ) {
+        val balanceDelta = pageRow.balance - student.balance
+        student.balance = pageRow.balance
+        if (balanceDelta != 0) {
+            val balancePayment = BalancePayment(
+                createdByContact = null,
+                createdBy = modifiedBy,
+                student = student,
+                document = null,
+                delta = balanceDelta,
+                comment = null,
+                approvedBy = modifiedBy
+            )
+            student.balances.add(balancePayment)
+            balances.add(balancePayment)
+        }
+    }
+
+    private fun updatePenalty(
+        pageRow: GoogleMainPageRowResponse,
+        student: Student,
+        modifiedBy: String,
+        penalties: MutableList<Penalty>,
+    ) {
+        val penaltyDelta = pageRow.penalty - student.penalty
         student.penalty = pageRow.penalty
+        if (penaltyDelta.compareTo(BigDecimal.ZERO) != 0) {
+            val penalty = Penalty(
+                createdBy = modifiedBy,
+                student = student,
+                delta = penaltyDelta,
+                currencyName = student.currencyName,
+            )
+            student.penalties.add(penalty)
+            penalties.add(penalty)
+        }
     }
 
     private fun updateTgIds(
         pageRow: GoogleMainPageRowResponse,
         student: Student,
+        allContacts: MutableList<Contact>,
     ) {
-        val contacts = contactRepository.findAllByStudent(student)
+        //TODO: must change parent and child chat id on tg ids changing
         pageRow.parentId?.let { parentId ->
-            if (contacts.find { it.contactType == ContactType.PARENT_ID.name } == null) {
-                val contact = Contact(student, ContactType.PARENT_ID.name, parentId)
-                student.contacts.add(contact)
-            }
+            val contact = contactService.buildContact(student, ContactType.PARENT_ID, parentId)
+            student.contacts.add(contact)
+            allContacts.add(contact)
+            contact
         }
         pageRow.childId?.let { childId ->
-            if (contacts.find { it.contactType == ContactType.CHILD_ID.name } == null) {
-                val contact = Contact(student, ContactType.CHILD_ID.name, childId)
-                student.contacts.add(contact)
-            }
+            val contact = contactService.buildContact(student, ContactType.CHILD_ID, childId)
+            student.contacts.add(contact)
+            allContacts.add(contact)
+            contact
         }
     }
 

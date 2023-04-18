@@ -14,7 +14,8 @@ import ru.apexman.botpupilsbalances.entity.user.Student
 class PendingBalancePayment(
     @ManyToOne
     @JoinColumn(name = "created_by_contact_id")
-    val createdByContact: Contact,
+    val createdByContact: Contact?,
+    val createdBy: String,
     @ManyToOne
     @JoinColumn(name = "student_id")
     val student: Student,

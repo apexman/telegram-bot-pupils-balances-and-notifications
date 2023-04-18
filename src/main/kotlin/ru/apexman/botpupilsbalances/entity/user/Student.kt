@@ -5,6 +5,7 @@ import ru.apexman.botpupilsbalances.constants.Parsers
 import ru.apexman.botpupilsbalances.dto.GooglePullPageRowResponse
 import ru.apexman.botpupilsbalances.entity.AbstractEntityWithLongKey
 import ru.apexman.botpupilsbalances.entity.contact.Contact
+import ru.apexman.botpupilsbalances.entity.payment.BalancePayment
 import ru.apexman.botpupilsbalances.entity.payment.Penalty
 import ru.apexman.botpupilsbalances.entity.payment.PendingBalancePayment
 import ru.apexman.botpupilsbalances.entity.userdetails.AlarmDetails
@@ -35,6 +36,8 @@ class Student(
     var penalty: BigDecimal,
     @OneToMany(mappedBy = "student")
     val contacts: MutableCollection<Contact> = mutableListOf(),
+    @OneToMany(mappedBy = "student")
+    val balances: MutableCollection<BalancePayment> = mutableListOf(),
     @OneToMany(mappedBy = "student")
     val comments: MutableCollection<Comment> = mutableListOf(),
     @OneToMany(mappedBy = "student")

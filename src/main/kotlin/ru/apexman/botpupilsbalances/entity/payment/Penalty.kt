@@ -12,9 +12,9 @@ import java.math.BigDecimal
 @Table(name = "penalties")
 class Penalty(
     @ManyToOne
-    @JoinColumn(name = "pupil_id")
+    @JoinColumn(name = "student_id")
     val student: Student,
-    val amount: BigDecimal,
+    val delta: BigDecimal,
     val currencyName: String,
-    val createdBy: String? = null,
+    val createdBy: String,
 ) : AbstractEntityWithLongKey()
