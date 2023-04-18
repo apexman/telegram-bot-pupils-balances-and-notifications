@@ -9,7 +9,6 @@ import com.google.zxing.qrcode.QRCodeWriter
 import org.springframework.stereotype.Service
 import java.awt.image.BufferedImage
 import java.io.ByteArrayOutputStream
-import java.io.File
 import java.nio.charset.StandardCharsets
 import javax.imageio.ImageIO
 
@@ -23,13 +22,12 @@ class QRCodeGenerator {
         val bitMatrix: BitMatrix = barcodeWriter.encode(text, BarcodeFormat.QR_CODE, 200, 200, properties)
         val conf = MatrixToImageConfig(MatrixToImageConfig.BLACK, background)
         val qrcode = MatrixToImageWriter.toBufferedImage(bitMatrix, conf)
-        ImageIO.write(qrcode, "png", File("out.png"))
         return toByteArray(qrcode)
     }
 
     private fun toByteArray(image: BufferedImage): ByteArray {
         val byteArrayOutputStream = ByteArrayOutputStream()
-        ImageIO.write(image, "png", byteArrayOutputStream)
+        byteArrayOutputStream.use { ImageIO.write(image, "png", it) }
         return byteArrayOutputStream.toByteArray()
     }
 

@@ -33,8 +33,10 @@ interface TelegramMessageHandler {
     }
 
     fun parseArgs(update: Update): List<String> {
-        val strings = update.message.text.split(" ").filter { it.isNotEmpty() }
-        return strings.subList(1, strings.size)
+        val strings = update.message.text?.split(" ")?.filter { it.isNotEmpty() }
+        return strings?.subList(1, strings.size)
+            ?: update.message.caption?.split(" ")?.filter { it.isNotEmpty() }
+            ?: listOf()
     }
 
     fun checkPermissions(update: Update, botUsername: String, telegramConfiguration: TelegramConfiguration): Boolean {

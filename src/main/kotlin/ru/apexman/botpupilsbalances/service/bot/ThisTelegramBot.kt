@@ -15,6 +15,7 @@ import org.telegram.telegrambots.meta.api.objects.User
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand
 import org.telegram.telegrambots.session.DefaultChatIdConverter
 import org.telegram.telegrambots.session.TelegramLongPollingSessionBot
+import ru.apexman.botpupilsbalances.service.bot.telegramhandlers.PendingBalancePaymentHandler
 import ru.apexman.botpupilsbalances.service.bot.telegramhandlers.TelegramMessageHandler
 import ru.apexman.botpupilsbalances.service.notification.TelegramConfiguration
 import ru.apexman.botpupilsbalances.service.notification.TelegramNotificationService
@@ -33,6 +34,7 @@ class ThisTelegramBot(
     fun postConstruct() {
         botUser = me
         val botCommands = handlers.mapNotNull { it.getBotCommand() }
+        setBot()
         validateBotCommands(botCommands)
         execute(SetMyCommands(botCommands, null, null))
     }
@@ -41,10 +43,10 @@ class ThisTelegramBot(
         return botUser?.userName!!
     }
 
-
     override fun onUpdateReceived(update: Update?, botSession: Optional<Session>?) {
         onUpdateReceived(update, botSession?.orElse(null))
     }
+
 
     fun onUpdateReceived(update: Update?, botSession: Session?) {
         try {
@@ -96,6 +98,14 @@ class ThisTelegramBot(
             )
         } catch (e: Exception) {
             logger.error("Cannot send notification about error to user", e)
+        }
+    }
+
+    private fun setBot() {
+        for (handler in handlers) {
+            if (handler is PendingBalancePaymentHandler) {
+                handler.setBot(this)
+            }
         }
     }
 

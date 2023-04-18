@@ -11,7 +11,7 @@ import ru.apexman.botpupilsbalances.entity.payment.PendingBalancePayment
 class Document(
     val documentName: String,
     val documentValue: ByteArray,
-    val documentHash: ByteArray?,
+    val documentHash: Int,
     val documentType: String,
     @OneToMany(mappedBy = "document")
     val pendingBalancePayments: MutableCollection<PendingBalancePayment> = mutableListOf(),
