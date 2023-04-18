@@ -62,9 +62,9 @@ class BalanceHandler(
         val student = contactsIfStudent.first().student
 
         val bytes = if (student.balance > 0) {
-            qrCodeGeneratorService.generate("${student.fullUserName} ACTIVE ${LocalDateTime.now()}", Color.GREEN)
+            qrCodeGeneratorService.generate("${student.fullUserName} ACTIVE ${LocalDateTime.now()}", QRCodeGenerator.GREEN)
         } else {
-            qrCodeGeneratorService.generate("${student.fullUserName} FORBIDDEN ${LocalDateTime.now()}", Color.RED)
+            qrCodeGeneratorService.generate("${student.fullUserName} FORBIDDEN ${LocalDateTime.now()}", QRCodeGenerator.RED)
         }
         return SendPhoto.builder()
             .chatId(update.message.chatId)
