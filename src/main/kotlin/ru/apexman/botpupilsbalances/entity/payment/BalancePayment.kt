@@ -1,9 +1,6 @@
 package ru.apexman.botpupilsbalances.entity.payment
 
-import jakarta.persistence.Entity
-import jakarta.persistence.JoinColumn
-import jakarta.persistence.ManyToOne
-import jakarta.persistence.Table
+import jakarta.persistence.*
 import ru.apexman.botpupilsbalances.entity.AbstractEntityWithLongKey
 import ru.apexman.botpupilsbalances.entity.Document
 import ru.apexman.botpupilsbalances.entity.contact.Contact
@@ -14,15 +11,17 @@ import ru.apexman.botpupilsbalances.entity.user.Student
 class BalancePayment(
     @ManyToOne
     @JoinColumn(name = "created_by_contact_id")
-    val createdByContact: Contact?,
-    val createdBy: String,
+    var createdByContact: Contact?,
+    var createdBy: String,
     @ManyToOne
     @JoinColumn(name = "student_id")
     val student: Student,
     @ManyToOne
     @JoinColumn(name = "document_id")
-    val document: Document? = null,
+    var document: Document? = null,
     val delta: Int,
     val approvedBy: String,
     val comment: String? = null,
+    @OneToOne(mappedBy = "balancePayment")
+    val pendingBalancePayment: PendingBalancePayment? = null,
 ) : AbstractEntityWithLongKey()

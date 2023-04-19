@@ -48,7 +48,7 @@ class ProfileHandler(
                     .build()
             ))
         val hasPendingBalancePayments =
-            pendingBalancePaymentRepository.findFirstByStudentAndDisabledAtIsNotNullOrderByCreatedAtDesc(student) != null
+            pendingBalancePaymentRepository.findFirstByStudentAndApprovedAtIsNotNullOrderByCreatedAtDesc(student) != null
         val lastComment = commentRepository.findFirstByStudentOrderByCreatedAtDesc(student)?.comment ?: ""
         val lastAlarmDetails =
             alarmDetailsRepository.findFirstByStudentOrderByCreatedAtDesc(student)

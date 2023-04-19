@@ -45,12 +45,16 @@ class LinkChildHandler(
                 .build()))
         val childTgId: Long = update.message.from.id
         val childTgUserName: String? = update.message.from.userName
+        val childTgLastName: String? = update.message.from.lastName
+        val childTgFirstName: String = update.message.from.firstName
+        val childTgFullName: String = (if (childTgLastName != null) "$childTgLastName " else "") + childTgFirstName
         val savingContacts = mutableListOf<Contact>()
         savingContacts.add(contactService.buildContact(student, ContactType.CHILD_ID, childTgId.toString()))
         savingContacts.add(contactService.buildContact(student, ContactType.CHILD_CHAT_ID, update.message.chatId.toString()))
         if (childTgUserName != null) {
             savingContacts.add(contactService.buildContact(student, ContactType.CHILD_TELEGRAM_USERNAME, childTgUserName))
         }
+        savingContacts.add(contactService.buildContact(student, ContactType.CHILD_TELEGRAM_FULL_NAME, childTgFullName))
         contactRepository.saveAll(savingContacts)
         return listOf(SendMessage.builder()
             .chatId(update.message.chatId)

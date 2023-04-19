@@ -3,6 +3,7 @@ package ru.apexman.botpupilsbalances.entity.payment
 import jakarta.persistence.Entity
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
+import jakarta.persistence.OneToOne
 import jakarta.persistence.Table
 import ru.apexman.botpupilsbalances.entity.AbstractEntityWithLongKey
 import ru.apexman.botpupilsbalances.entity.Document
@@ -23,6 +24,9 @@ class PendingBalancePayment(
     @ManyToOne
     @JoinColumn(name = "document_id")
     val document: Document? = null,
-    val disabledAt: LocalDateTime? = null,
-    val disabledBy: String? = null,
+    var approvedAt: LocalDateTime? = null,
+    var approvedBy: String? = null,
+    @OneToOne
+    @JoinColumn(name = "balance_payment_id")
+    var balancePayment: BalancePayment? = null,
 ) : AbstractEntityWithLongKey()

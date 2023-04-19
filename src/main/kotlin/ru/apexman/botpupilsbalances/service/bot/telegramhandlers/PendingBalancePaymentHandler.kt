@@ -12,6 +12,7 @@ import ru.apexman.botpupilsbalances.repository.DocumentRepository
 import ru.apexman.botpupilsbalances.repository.PendingBalancePaymentRepository
 import ru.apexman.botpupilsbalances.service.bot.TelegramFilesService
 import ru.apexman.botpupilsbalances.service.bot.ThisTelegramBot
+import ru.apexman.botpupilsbalances.service.bot.telegramhandlers.commandhandlers.oncallbackhandlers.IncreaseBalanceHandler
 import ru.apexman.botpupilsbalances.service.notification.TelegramConfiguration
 import ru.apexman.botpupilsbalances.service.notification.TelegramNotificationService
 import java.io.Serializable
@@ -26,6 +27,7 @@ class PendingBalancePaymentHandler(
     private val documentRepository: DocumentRepository,
     private val telegramNotificationService: TelegramNotificationService,
     private val telegramConfiguration: TelegramConfiguration,
+    private val increaseBalanceHandler: IncreaseBalanceHandler,
 ) : TelegramMessageHandler, PrivateChatHandler {
 
     private var bot: ThisTelegramBot? = null
@@ -39,6 +41,7 @@ class PendingBalancePaymentHandler(
             documentRepository,
             telegramNotificationService,
             telegramConfiguration,
+            increaseBalanceHandler,
         )
     }
 

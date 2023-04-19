@@ -65,19 +65,6 @@ create table if not exists documents
     document_type    varchar not null
 );
 
-create table if not exists pending_balance_payments
-(
-    id                      serial primary key,
-    created_at              timestamptz not null,
-    last_modified_at        timestamptz not null,
-    created_by_contact_id   integer constraint fk_pending_balance_payments_contacts references contacts,
-    created_by              varchar not null,
-    student_id              integer not null constraint fk_pending_balance_payments_students references students,
-    document_id             integer constraint fk_pending_balance_payments_documents references documents,
-    disabled_at             timestamptz,
-    disabled_by             varchar
-);
-
 create table if not exists balance_payments
 (
     id                      serial primary key,
@@ -90,6 +77,21 @@ create table if not exists balance_payments
     delta                   integer not null,
     approved_by             varchar not null,
     comment                 varchar
+);
+
+create table if not exists pending_balance_payments
+(
+    id                      serial primary key,
+    created_at              timestamptz not null,
+    last_modified_at        timestamptz not null,
+    created_by_contact_id   integer constraint fk_pending_balance_payments_contacts references contacts,
+    created_by              varchar not null,
+    student_id              integer not null constraint fk_pending_balance_payments_students references students,
+    document_id             integer constraint fk_pending_balance_payments_documents references documents,
+    approved_at             timestamptz,
+    approved_by             varchar,
+    balance_payment_id      integer constraint fk_pending_balance_payments_balance_payments references balance_payments,
+    unique(balance_payment_id)
 );
 
 create table if not exists penalties
