@@ -12,14 +12,12 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories
-import org.springframework.scheduling.annotation.EnableScheduling
 import java.util.*
 
 @EnableJpaAuditing
 @ConfigurationPropertiesScan
 @ComponentScan(value = ["ru.apexman.botpupilsbalances", "org.telegram.telegrambots"])
 @EnableJpaRepositories(basePackages = ["ru.apexman.botpupilsbalances.repository"])
-@EnableScheduling
 @SpringBootApplication
 class MainApplication {
     private val logger = LoggerFactory.getLogger(MainApplication::class.java)
@@ -32,7 +30,7 @@ class MainApplication {
     }
 
     @Bean
-    fun mapper(): ObjectMapper? {
+    fun mapper(): ObjectMapper {
         return jacksonObjectMapper().registerModule(JavaTimeModule())
     }
 }

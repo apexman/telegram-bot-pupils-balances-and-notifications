@@ -44,6 +44,20 @@ class GetHandler(
     }
 
     override fun handle(update: Update, botSession: Session?): List<PartialBotApiMethod<out Serializable>> {
+        val messages = buildSendMessages()
+        if (messages.isEmpty()) {
+            return listOf(
+                SendMessage.builder()
+                    .chatId(telegramProperties.adminsChatId)
+                    .text("Список пуст")
+                    .replyToMessageId(update.message.messageId)
+                    .build()
+            )
+        }
+        return messages
+    }
+
+    fun buildSendMessages(): List<SendMessage> {
         return buildTextWithOverdueBalances()
             .map {
                 SendMessage.builder()
@@ -77,11 +91,11 @@ class GetHandler(
                     Есть необработанные платежи: ${Parsers.BOOLEAN_TO_STRING(hasPendingBalancePayments)}
                     Справочная информация: '$lastComment',
                     Контакты:
-                    Tg id родителя: ${
+                        Tg id родителя: ${
                     student.contacts.filter { it.contactType == ContactType.PARENT_ID.name }
                         .joinToString(", ") { it.contactValue }
                 }
-                    Tg id ученика: ${
+                        Tg id ученика: ${
                     student.contacts.filter { it.contactType == ContactType.CHILD_ID.name }
                         .joinToString(", ") { it.contactValue }
                 }
@@ -90,7 +104,7 @@ class GetHandler(
             }
     }
 
-    private fun buildInlineKeyboardMarkup(student: Student): ReplyKeyboard {
+    fun buildInlineKeyboardMarkup(student: Student): ReplyKeyboard {
         val balanceIncreaseButton = InlineKeyboardButton.builder()
             .text("Оплата произведена (+28)")
             .callbackData("${increaseBalanceForceHandler.getCommandName()} ${student.googleId}")

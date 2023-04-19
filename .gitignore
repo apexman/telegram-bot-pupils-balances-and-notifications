@@ -42,4 +42,5 @@ out/
 .DS_Store
 
 t.json
+t.txt
 google-sa-credentials-local.json

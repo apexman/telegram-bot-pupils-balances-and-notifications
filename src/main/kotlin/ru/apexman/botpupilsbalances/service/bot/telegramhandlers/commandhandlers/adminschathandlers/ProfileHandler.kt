@@ -78,8 +78,8 @@ class ProfileHandler(
             Последний комментарий: $lastComment
             Последний alarm_details: ${lastAlarmDetails?.details ?: ""}
             Контакты:
-            Tg id родителя: $parentTgIds
-            Tg id ученика: $childTgIds
+                Tg id родителя: $parentTgIds
+                Tg id ученика: $childTgIds
         """.trimIndent()
 
         return listOf(
