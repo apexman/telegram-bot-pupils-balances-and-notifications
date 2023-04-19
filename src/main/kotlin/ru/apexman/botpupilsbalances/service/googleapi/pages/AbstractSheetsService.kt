@@ -78,11 +78,8 @@ abstract class AbstractSheetsService {
 
     protected fun parseBoolean(someString: Any?): Boolean? {
         return when (someString) {
-            is String -> Parsers.STRING_TO_BOOLEAN.getOrDefault(someString.lowercase().trim(), null)
-            is BigDecimal -> Parsers.STRING_TO_BOOLEAN.getOrDefault(
-                someString.stripTrailingZeros().toPlainString().trim(),
-                null
-            )
+            is String -> Parsers.STRING_TO_BOOLEAN(someString)
+            is BigDecimal -> Parsers.STRING_TO_BOOLEAN(someString.stripTrailingZeros().toPlainString())
             else -> null
         }
     }

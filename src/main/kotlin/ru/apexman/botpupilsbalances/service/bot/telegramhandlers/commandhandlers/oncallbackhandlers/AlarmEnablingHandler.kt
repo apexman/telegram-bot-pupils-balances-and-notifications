@@ -28,9 +28,15 @@ class AlarmEnablingHandler(
     }
 
     override fun handle(update: Update, botSession: Session?): List<PartialBotApiMethod<out Serializable>> {
+        val answerErrorCallbackQueryList = listOf(
+            AnswerCallbackQuery.builder()
+                .callbackQueryId(update.callbackQuery.id)
+                .text("Ученик не найден")
+                .build()
+        )
         val args = parseArgs(update)
         val googleId = args[0]
-        val student = studentRepository.findByGoogleId(googleId) ?: return listOf()
+        val student = studentRepository.findByGoogleId(googleId) ?: return answerErrorCallbackQueryList
         if (student.isAlarm) {
             return listOf(
                 AnswerCallbackQuery.builder()

@@ -94,7 +94,7 @@ class RefreshingFromMainPageService(
         val classNum = parse(values.getOrNull(6), this::parseInt, errors,
             "Неправильный формат номера класса '${values.getOrNull(6)}', ожидалось целое число")
         val hostel = parse(values.getOrNull(7), this::parseBoolean, errors,
-            "Неправильный формат пансионата '${values.getOrNull(7)}', ожидалось один из: " + Parsers.STRING_TO_BOOLEAN.keys.joinToString(", ", "[", "]"))
+            "Неправильный формат пансионата '${values.getOrNull(7)}', ожидалось один из: " + Parsers.STRING_TO_BOOLEAN_KEYS.keys.joinToString(", ", "[", "]"))
         val discount = parse(values.getOrNull(8), this::parseBigDecimal, errors,
             "Неправильный формат дисконта '${values.getOrNull(8)}', ожидалось дробное число")
         val price = parse(values.getOrNull(9), this::parseBigDecimal, errors,
@@ -108,10 +108,10 @@ class RefreshingFromMainPageService(
         val childId= parse(values.getOrNull(13), this::parseString, errors,
             "Телеграм аккаунт ученика не заполнен")
         val pause = parse(values.getOrNull(14), this::parseBoolean, errors,
-            "Неправильный формат паузы '${values.getOrNull(14)}', ожидалось один из: " + Parsers.STRING_TO_BOOLEAN.keys.joinToString(", ", "[", "]"))
+            "Неправильный формат паузы '${values.getOrNull(14)}', ожидалось один из: " + Parsers.STRING_TO_BOOLEAN_KEYS.keys.joinToString(", ", "[", "]"))
         val comment = parse(values.getOrNull(15), this::parseString)
         var alarm = parse(values.getOrNull(16), this::parseBoolean, errors,
-        "Неправильный формат Alarm '${values.getOrNull(16)}', ожидалось один из: " + Parsers.STRING_TO_BOOLEAN.keys.joinToString(", ", "[", "]"))
+        "Неправильный формат Alarm '${values.getOrNull(16)}', ожидалось один из: " + Parsers.STRING_TO_BOOLEAN_KEYS.keys.joinToString(", ", "[", "]"))
         val alarmDetails = parse(values.getOrNull(17), this::parseString)
         val penalty = parse(values.getOrNull(18), this::parseBigDecimal, errors,
         "Неправильный формат пени '${values.getOrNull(18)}', ожидалось дробное число")

@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import ru.apexman.botpupilsbalances.constants.ContactType
 import ru.apexman.botpupilsbalances.constants.Parsers
+import ru.apexman.botpupilsbalances.dto.AddHandlerDataDto
 import ru.apexman.botpupilsbalances.dto.GoogleMainPageRowRequest
 import ru.apexman.botpupilsbalances.dto.GoogleMainPageRowResponse
 import ru.apexman.botpupilsbalances.dto.GooglePullPageRowResponse
@@ -55,9 +56,9 @@ class StudentService(
             googleId = student.googleId,
             publicId = student.publicId,
             name = student.fullUserName,
-            birthday = student.birthday.format(DateTimeFormatter.ofPattern(Parsers.DATE_PATTERN)),
+            birthday = Parsers.LOCAL_DATE_TO_STRING(student.birthday),
             age = ChronoUnit.YEARS.between(student.birthday, LocalDate.now()).toString(),
-            dateEnrollment = student.dateEnrollment.format(DateTimeFormatter.ofPattern(Parsers.DATE_PATTERN)),
+            dateEnrollment = Parsers.LOCAL_DATE_TO_STRING(student.dateEnrollment),
             classNum = student.classNum.toString(),
             hostel = Parsers.BOOLEAN_TO_STRING(student.isHostel),
             discount = student.discount.stripTrailingZeros().toPlainString(),
@@ -75,16 +76,13 @@ class StudentService(
     }
 
     @Transactional
-    fun createNewStudents(googlePullPageRowResponses: Collection<GooglePullPageRowResponse>): Collection<Student> {
-        //TODO: create student's price
-        val students = googlePullPageRowResponses.map { Student.from(it) }
-        studentRepository.saveAll(students)
-        for (student in students) {
-            student.googleId = createGoogleId(student)
-            student.publicId = createPublicId(student)
-        }
-        studentRepository.saveAll(students)
-        return students
+    fun createStudents(googlePullPageRowResponses: Collection<GooglePullPageRowResponse>): Collection<Student> {
+        return createStudents(googlePullPageRowResponses.map { Student.from(it) })
+    }
+
+    @Transactional
+    fun createStudent(dto: AddHandlerDataDto): Student {
+        return createStudents(listOf(Student.from(dto))).first()
     }
 
     @Transactional
@@ -111,6 +109,18 @@ class StudentService(
         balancePaymentRepository.saveAll(balances)
         penaltyRepository.saveAll(penalties)
         contactRepository.saveAll(contacts)
+        return students
+    }
+
+    @JvmName("createFromEntities")
+    private fun createStudents(students: Collection<Student>): Collection<Student> {
+        //TODO: create student's price
+        studentRepository.saveAll(students)
+        for (student in students) {
+            student.googleId = createGoogleId(student)
+            student.publicId = createPublicId(student)
+        }
+        studentRepository.saveAll(students)
         return students
     }
 

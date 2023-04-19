@@ -1,6 +1,7 @@
 package ru.apexman.botpupilsbalances.service.bot
 
 import jakarta.annotation.PostConstruct
+import org.apache.shiro.session.InvalidSessionException
 import org.apache.shiro.session.Session
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
@@ -25,7 +26,7 @@ import java.util.*
 @Component
 class ThisTelegramBot(
     private val telegramConfiguration: TelegramConfiguration,
-    private val handlers: Collection<TelegramMessageHandler>,
+    private val handlers: List<TelegramMessageHandler>,
     private val telegramNotificationService: TelegramNotificationService,
 ) : TelegramLongPollingSessionBot(DefaultChatIdConverter(), withBotOptions(), telegramConfiguration.token) {
     private val logger = LoggerFactory.getLogger(ThisTelegramBot::class.java)
@@ -83,11 +84,25 @@ class ThisTelegramBot(
                     .build()
                 execute(message)
             }
+        } catch (e: InvalidSessionException) {
+            try {
+                logger.error(e.toString(), e)
+                execute(
+                    SendMessage.builder()
+                        .chatId(update?.message?.chatId ?: update?.callbackQuery?.message?.chatId!!)
+                        //todo: fix message
+                        .text("Вышло время ожидания ответа от пользователя, текущий контекст очищен")
+                        .allowSendingWithoutReply(true)
+                        .build()
+                )
+            } catch (e: Exception) {
+                logger.error("Cannot send notification about error to user", e)
+            }
         } catch (e: Throwable) {
             logger.error(e.toString(), e)
             telegramNotificationService.sendMonitoring(
                 e.toString(),
-                TelegramNotificationService.buildTelegramDocumentDto(e, update)
+                TelegramNotificationService.buildTelegramDocumentDto(e, update, botSession)
             )
             tryAnswer(update)
         }
@@ -108,6 +123,7 @@ class ThisTelegramBot(
         }
     }
 
+    //todo: remove injection
     private fun setBot() {
         for (handler in handlers) {
             if (handler is PendingBalancePaymentHandler) {

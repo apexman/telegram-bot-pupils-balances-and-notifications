@@ -87,9 +87,9 @@ class PendingBalancePaymentHandler(
                 .build()))
 
         if (update.message.document != null) {
-            telegramFilesService!!.saveDocument(update, update.message.document, contact, getBotCommandRequester(update))
+            telegramFilesService!!.saveDocument(update, botSession, update.message.document, contact, getBotCommandRequester(update))
         } else if (update.message.photo != null && update.message.photo.isNotEmpty()) {
-            telegramFilesService!!.savePhoto(update, update.message.photo, contact, getBotCommandRequester(update))
+            telegramFilesService!!.savePhoto(update, botSession, update.message.photo, contact, getBotCommandRequester(update))
         } else {
             return listOf(SendMessage.builder()
                 .chatId(update.message.chatId)

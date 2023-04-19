@@ -1,12 +1,20 @@
 package ru.apexman.botpupilsbalances.service.bot.telegramhandlers
 
+import org.apache.shiro.session.InvalidSessionException
 import org.apache.shiro.session.Session
+import org.slf4j.LoggerFactory
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand
+import ru.apexman.botpupilsbalances.dto.SessionDataDto
+import ru.apexman.botpupilsbalances.service.bot.ThisTelegramBot
 import ru.apexman.botpupilsbalances.service.notification.TelegramConfiguration
 import java.io.Serializable
 
+/**
+ * Интерфейс классов, которые могут обработать сообщения от телеги
+ * Важен порядок - @Order
+ */
 interface TelegramMessageHandler {
     fun getBotCommand(): BotCommand?
     fun handle(update: Update, botSession: Session?): List<PartialBotApiMethod<out Serializable>>
@@ -15,6 +23,17 @@ interface TelegramMessageHandler {
         botSession: Session?,
         botUsername: String,
         telegramConfiguration: TelegramConfiguration,
+    ): Boolean {
+        return hasBotCommand(update, botSession, botUsername, telegramConfiguration)
+                || hasCallbackCommand(update, botSession, botUsername, telegramConfiguration)
+                || hasActiveSessionCommand(update, botSession, botUsername, telegramConfiguration)
+    }
+
+    fun hasBotCommand(
+        update: Update,
+        botSession: Session?,
+        botUsername: String,
+        telegramConfiguration: TelegramConfiguration
     ): Boolean {
         if (update.hasMessage()
             && update.message.hasEntities()
@@ -26,15 +45,42 @@ interface TelegramMessageHandler {
             val commandParts = commandFullName.split("@").toMutableList()
             commandParts.add(botUsername)
             if (commandParts.getOrNull(1) == botUsername
+                && getBotCommand()?.command != null
                 && parseCommand(update) == getBotCommand()?.command
             ) {
                 return checkPermissions(update, botUsername, telegramConfiguration)
             }
         }
+        return false
+    }
+
+    fun hasCallbackCommand(
+        update: Update,
+        botSession: Session?,
+        botUsername: String,
+        telegramConfiguration: TelegramConfiguration
+    ): Boolean {
         return this is CallbackQueryHandler
                 && update.hasCallbackQuery()
                 && checkCallbackQuery(update, botUsername, telegramConfiguration)
                 && parseCallbackCommand(update) == this.getCommandName()
+    }
+
+    fun hasActiveSessionCommand(
+        update: Update,
+        botSession: Session?,
+        botUsername: String,
+        telegramConfiguration: TelegramConfiguration
+    ): Boolean {
+        return try {
+            val tgId = update.message?.from?.id ?: return false
+            val userSessionData = botSession?.getAttribute(tgId) as SessionDataDto?
+                ?: SessionDataDto()
+            userSessionData.currentCommandName != null
+                    && userSessionData.currentCommandName == getBotCommand()?.command
+        } catch (_: InvalidSessionException) {
+            false
+        }
     }
 
     fun parseCommand(update: Update): String? {
@@ -89,4 +135,5 @@ interface TelegramMessageHandler {
         val userName = if (tgUserName != null) " TgUserName='$tgUserName'" else ""
         return "${commandName}TgId='$tgId'$userName"
     }
+
 }

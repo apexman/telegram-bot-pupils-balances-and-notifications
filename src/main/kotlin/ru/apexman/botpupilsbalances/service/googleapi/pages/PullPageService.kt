@@ -70,7 +70,7 @@ class PullPageService(
         val classNum = parse(values.getOrNull(3), this::parseInt, errors,
             "Неправильный формат номера класса '${values.getOrNull(3)}', ожидалось целое число")
         val hostel = parse(values.getOrNull(4), this::parseBoolean, errors,
-            "Неправильный формат пансионата '${values.getOrNull(4)}', ожидалось один из: " + Parsers.STRING_TO_BOOLEAN.keys.joinToString(", ", "[", "]"))
+            "Неправильный формат пансионата '${values.getOrNull(4)}', ожидалось один из: " + Parsers.STRING_TO_BOOLEAN_KEYS.keys.joinToString(", ", "[", "]"))
         val discount = parse(values.getOrNull(5), this::parseBigDecimal, errors,
             "Неправильный формат дисконта '${values.getOrNull(5)}', ожидалось дробное число")
         if (name != null

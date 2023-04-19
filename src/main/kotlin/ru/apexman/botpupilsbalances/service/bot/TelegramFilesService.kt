@@ -1,5 +1,6 @@
 package ru.apexman.botpupilsbalances.service.bot
 
+import org.apache.shiro.session.Session
 import org.slf4j.LoggerFactory
 import org.springframework.http.MediaType
 import org.telegram.telegrambots.meta.api.methods.ForwardMessage
@@ -28,7 +29,7 @@ class TelegramFilesService(
 ) {
     private val logger = LoggerFactory.getLogger(ThisTelegramBot::class.java)
 
-    fun saveDocument(update: Update, tDocument: Document, contact: Contact, commandRequester: String) {
+    fun saveDocument(update: Update, botSession: Session?, tDocument: Document, contact: Contact, commandRequester: String) {
         try {
             val docBytes = download(tDocument.fileId)!!.readBytes()
             val pendingBalancePayment =
@@ -46,12 +47,12 @@ class TelegramFilesService(
             logger.error(e.toString(), e)
             telegramNotificationService.sendMonitoring(
                 e.toString(),
-                TelegramNotificationService.buildTelegramDocumentDto(e, update)
+                TelegramNotificationService.buildTelegramDocumentDto(e, update, botSession)
             )
         }
     }
 
-    fun savePhoto(update: Update, photos: MutableList<PhotoSize?>, contact: Contact, commandRequester: String) {
+    fun savePhoto(update: Update, botSession: Session?, photos: MutableList<PhotoSize?>, contact: Contact, commandRequester: String) {
         try {
             val photo = photos.maxBy { it?.fileSize ?: 0 }!!
             val docBytes = download(photo.fileId)!!.readBytes()
@@ -62,7 +63,7 @@ class TelegramFilesService(
             logger.error(e.toString(), e)
             telegramNotificationService.sendMonitoring(
                 e.toString(),
-                TelegramNotificationService.buildTelegramDocumentDto(e, update)
+                TelegramNotificationService.buildTelegramDocumentDto(e, update, botSession)
             )
         }
     }

@@ -5,6 +5,7 @@ import jakarta.persistence.Entity
 import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
 import ru.apexman.botpupilsbalances.constants.Parsers
+import ru.apexman.botpupilsbalances.dto.AddHandlerDataDto
 import ru.apexman.botpupilsbalances.dto.GooglePullPageRowResponse
 import ru.apexman.botpupilsbalances.entity.AbstractEntityWithLongKey
 import ru.apexman.botpupilsbalances.entity.contact.Contact
@@ -64,6 +65,30 @@ class Student(
                 discount = pageRow.discount,
                 price = BigDecimal.ZERO,
                 currencyName = Parsers.CLASS_NUM_TO_CURRENCY_NAME(pageRow.classNum).name,
+                balance = 0,
+                isPause = false,
+                isAlarm = false,
+                penalty = BigDecimal.ZERO,
+                contacts = mutableListOf(),
+                comments = mutableListOf(),
+                alarmDetails = mutableListOf(),
+                pendingBalancePayments = mutableListOf(),
+                penalties = mutableListOf(),
+            )
+        }
+
+        fun from(dto: AddHandlerDataDto): Student {
+            return Student(
+                googleId = UUID.randomUUID().toString(),
+                publicId = UUID.randomUUID().toString(),
+                fullUserName = dto.name!!,
+                birthday = dto.birthday!!,
+                dateEnrollment = dto.dateEnrollment!!,
+                classNum = dto.classNum!!,
+                isHostel = dto.isHostel!!,
+                discount = BigDecimal.ZERO,
+                price = BigDecimal.ZERO,
+                currencyName = Parsers.CLASS_NUM_TO_CURRENCY_NAME(dto.classNum!!).name,
                 balance = 0,
                 isPause = false,
                 isAlarm = false,

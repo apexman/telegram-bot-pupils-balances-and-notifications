@@ -2,6 +2,7 @@ package ru.apexman.botpupilsbalances.service.notification
 
 import jakarta.annotation.PostConstruct
 import jakarta.annotation.PreDestroy
+import org.apache.shiro.session.Session
 import org.slf4j.LoggerFactory
 import org.springframework.core.io.ByteArrayResource
 import org.springframework.http.HttpHeaders
@@ -37,26 +38,6 @@ class TelegramNotificationService(
         val text = "Application shutdown"
         logger.info(text)
         sendMonitoring(text)
-    }
-
-    fun sendToAdminsChat(text: String, document: TelegramDocumentDto? = null) {
-        try {
-            sendMessage(telegramConfiguration.adminsChatId, text, document)
-        } catch (e: Exception) {
-            val errorMessage = "Failed to send to chat ${telegramConfiguration.adminsChatId}, text: $text"
-            logger.error(errorMessage, e)
-            sendMonitoring(errorMessage, buildTelegramDocumentDto(e))
-        }
-    }
-
-    fun sendToCollectingReceiptsChat(text: String, document: TelegramDocumentDto? = null) {
-        try {
-            sendMessage(telegramConfiguration.collectingReceiptsChatId, text, document)
-        } catch (e: Exception) {
-            val errorMessage = "Failed to send to chat ${telegramConfiguration.collectingReceiptsChatId}, text: $text"
-            logger.error(errorMessage, e)
-            sendMonitoring(errorMessage, buildTelegramDocumentDto(e))
-        }
     }
 
     fun sendMonitoring(woPrefixText: String, document: TelegramDocumentDto? = null) {
@@ -129,13 +110,14 @@ class TelegramNotificationService(
     }
 
     companion object {
-        fun buildTelegramDocumentDto(exception: Throwable, update: Update? = null): TelegramDocumentDto {
+        fun buildTelegramDocumentDto(exception: Throwable, update: Update? = null, botSession: Session? = null): TelegramDocumentDto {
             val updateString = if (update != null) "$update\n\n--------\n\n" else ""
+            val botSessionString = if (botSession != null) "$botSession\n\n--------\n\n" else ""
             val stringWriter = StringWriter()
             val printWriter = PrintWriter(stringWriter)
             exception.printStackTrace(printWriter)
             printWriter.close()
-            return TelegramDocumentDto(name = "exception.log", content = updateString + stringWriter.toString())
+            return TelegramDocumentDto(name = "exception.log", content = updateString + botSessionString + stringWriter.toString())
         }
     }
 
