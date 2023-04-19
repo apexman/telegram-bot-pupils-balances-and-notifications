@@ -16,7 +16,7 @@ class BalancePayment(
     @ManyToOne
     @JoinColumn(name = "student_id")
     val student: Student,
-    @ManyToOne
+    @ManyToOne(cascade = [CascadeType.REMOVE])
     @JoinColumn(name = "document_id")
     var document: Document? = null,
     val delta: Int,

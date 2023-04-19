@@ -24,4 +24,13 @@ interface StudentRepository : JpaRepository<Student, Long> {
 
     fun findAllByIsPauseIsTrue(): List<Student>
 
+    @Query("""
+        select s 
+        from Student s 
+        left join fetch s.contacts con
+        where s.isPause != true
+            and s.balance <= ?1
+    """)
+    fun findAllByIsPauseIsFalseAndBalanceLessThanEqual(balance: Int = 7): List<Student>
+
 }

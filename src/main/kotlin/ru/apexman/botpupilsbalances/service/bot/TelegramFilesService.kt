@@ -17,7 +17,7 @@ import ru.apexman.botpupilsbalances.entity.payment.PendingBalancePayment
 import ru.apexman.botpupilsbalances.repository.DocumentRepository
 import ru.apexman.botpupilsbalances.repository.PendingBalancePaymentRepository
 import ru.apexman.botpupilsbalances.service.bot.telegramhandlers.commandhandlers.oncallbackhandlers.IncreaseBalanceHandler
-import ru.apexman.botpupilsbalances.service.notification.TelegramConfiguration
+import ru.apexman.botpupilsbalances.service.notification.TelegramProperties
 import ru.apexman.botpupilsbalances.service.notification.TelegramNotificationService
 import java.io.File
 import java.time.LocalDateTime
@@ -29,7 +29,7 @@ class TelegramFilesService(
     private val pendingBalancePaymentRepository: PendingBalancePaymentRepository,
     private val documentRepository: DocumentRepository,
     private val telegramNotificationService: TelegramNotificationService,
-    private val telegramConfiguration: TelegramConfiguration,
+    private val telegramProperties: TelegramProperties,
     private val increaseBalanceHandler: IncreaseBalanceHandler,
 ) {
     private val logger = LoggerFactory.getLogger(ThisTelegramBot::class.java)
@@ -139,7 +139,7 @@ class TelegramFilesService(
             .build()
 
         val message = SendMessage.builder()
-            .chatId(telegramConfiguration.collectingReceiptsChatId)
+            .chatId(telegramProperties.collectingReceiptsChatId)
             .text(
                 """
                 ID: ${student.googleId}
@@ -156,7 +156,7 @@ class TelegramFilesService(
         val forwardMessage = ForwardMessage.builder()
             .fromChatId(update.message.chatId)
             .messageId(update.message.messageId)
-            .chatId(telegramConfiguration.collectingReceiptsChatId)
+            .chatId(telegramProperties.collectingReceiptsChatId)
             .protectContent(false)
             .build()
         return thisTelegramBot.execute(forwardMessage)

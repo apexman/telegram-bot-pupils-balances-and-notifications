@@ -13,7 +13,7 @@ import ru.apexman.botpupilsbalances.repository.PendingBalancePaymentRepository
 import ru.apexman.botpupilsbalances.service.bot.TelegramFilesService
 import ru.apexman.botpupilsbalances.service.bot.ThisTelegramBot
 import ru.apexman.botpupilsbalances.service.bot.telegramhandlers.commandhandlers.oncallbackhandlers.IncreaseBalanceHandler
-import ru.apexman.botpupilsbalances.service.notification.TelegramConfiguration
+import ru.apexman.botpupilsbalances.service.notification.TelegramProperties
 import ru.apexman.botpupilsbalances.service.notification.TelegramNotificationService
 import java.io.Serializable
 
@@ -26,7 +26,7 @@ class PendingBalancePaymentHandler(
     private val pendingBalancePaymentRepository: PendingBalancePaymentRepository,
     private val documentRepository: DocumentRepository,
     private val telegramNotificationService: TelegramNotificationService,
-    private val telegramConfiguration: TelegramConfiguration,
+    private val telegramProperties: TelegramProperties,
     private val increaseBalanceHandler: IncreaseBalanceHandler,
 ) : TelegramMessageHandler, PrivateChatHandler {
 
@@ -40,7 +40,7 @@ class PendingBalancePaymentHandler(
             pendingBalancePaymentRepository,
             documentRepository,
             telegramNotificationService,
-            telegramConfiguration,
+            telegramProperties,
             increaseBalanceHandler,
         )
     }
@@ -53,10 +53,10 @@ class PendingBalancePaymentHandler(
         update: Update,
         botSession: Session?,
         botUsername: String,
-        telegramConfiguration: TelegramConfiguration,
+        telegramProperties: TelegramProperties,
     ): Boolean {
         if (update.hasMessage()) {
-            return checkPermissions(update, botUsername, telegramConfiguration)
+            return checkPermissions(update, botUsername, telegramProperties)
                     && (update.message.hasPhoto() || update.message.hasDocument())
         }
         return false

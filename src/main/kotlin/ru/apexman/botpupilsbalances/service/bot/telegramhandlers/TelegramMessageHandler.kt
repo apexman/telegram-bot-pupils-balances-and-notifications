@@ -2,13 +2,11 @@ package ru.apexman.botpupilsbalances.service.bot.telegramhandlers
 
 import org.apache.shiro.session.InvalidSessionException
 import org.apache.shiro.session.Session
-import org.slf4j.LoggerFactory
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand
 import ru.apexman.botpupilsbalances.dto.SessionDataDto
-import ru.apexman.botpupilsbalances.service.bot.ThisTelegramBot
-import ru.apexman.botpupilsbalances.service.notification.TelegramConfiguration
+import ru.apexman.botpupilsbalances.service.notification.TelegramProperties
 import java.io.Serializable
 
 /**
@@ -22,18 +20,18 @@ interface TelegramMessageHandler {
         update: Update,
         botSession: Session?,
         botUsername: String,
-        telegramConfiguration: TelegramConfiguration,
+        telegramProperties: TelegramProperties,
     ): Boolean {
-        return hasBotCommand(update, botSession, botUsername, telegramConfiguration)
-                || hasCallbackCommand(update, botSession, botUsername, telegramConfiguration)
-                || hasActiveSessionCommand(update, botSession, botUsername, telegramConfiguration)
+        return hasBotCommand(update, botSession, botUsername, telegramProperties)
+                || hasCallbackCommand(update, botSession, botUsername, telegramProperties)
+                || hasActiveSessionCommand(update, botSession, botUsername, telegramProperties)
     }
 
     fun hasBotCommand(
         update: Update,
         botSession: Session?,
         botUsername: String,
-        telegramConfiguration: TelegramConfiguration
+        telegramProperties: TelegramProperties
     ): Boolean {
         if (update.hasMessage()
             && update.message.hasEntities()
@@ -48,7 +46,7 @@ interface TelegramMessageHandler {
                 && getBotCommand()?.command != null
                 && parseCommand(update) == getBotCommand()?.command
             ) {
-                return checkPermissions(update, botUsername, telegramConfiguration)
+                return checkPermissions(update, botUsername, telegramProperties)
             }
         }
         return false
@@ -58,11 +56,11 @@ interface TelegramMessageHandler {
         update: Update,
         botSession: Session?,
         botUsername: String,
-        telegramConfiguration: TelegramConfiguration
+        telegramProperties: TelegramProperties
     ): Boolean {
         return this is CallbackQueryHandler
                 && update.hasCallbackQuery()
-                && checkCallbackQuery(update, botUsername, telegramConfiguration)
+                && checkCallbackQuery(update, botUsername, telegramProperties)
                 && parseCallbackCommand(update) == this.getCommandName()
     }
 
@@ -70,7 +68,7 @@ interface TelegramMessageHandler {
         update: Update,
         botSession: Session?,
         botUsername: String,
-        telegramConfiguration: TelegramConfiguration
+        telegramProperties: TelegramProperties
     ): Boolean {
         return try {
             val tgId = update.message?.from?.id ?: return false
@@ -100,30 +98,30 @@ interface TelegramMessageHandler {
             ?: listOf()
     }
 
-    fun checkPermissions(update: Update, botUsername: String, telegramConfiguration: TelegramConfiguration): Boolean {
-        return checkPrivateChat(update, botUsername, telegramConfiguration)
-                || checkAdminsChat(update, botUsername, telegramConfiguration)
-                || checkCollectionReceiptsChat(update, botUsername, telegramConfiguration)
-                || checkCallbackQuery(update, botUsername, telegramConfiguration)
+    fun checkPermissions(update: Update, botUsername: String, telegramProperties: TelegramProperties): Boolean {
+        return checkPrivateChat(update, botUsername, telegramProperties)
+                || checkAdminsChat(update, botUsername, telegramProperties)
+                || checkCollectionReceiptsChat(update, botUsername, telegramProperties)
+                || checkCallbackQuery(update, botUsername, telegramProperties)
     }
 
-    fun checkPrivateChat(update: Update, botUsername: String, telegramConfiguration: TelegramConfiguration): Boolean {
+    fun checkPrivateChat(update: Update, botUsername: String, telegramProperties: TelegramProperties): Boolean {
         return this is PrivateChatHandler && update.message?.chat?.isUserChat == true
     }
 
-    fun checkAdminsChat(update: Update, botUsername: String, telegramConfiguration: TelegramConfiguration): Boolean {
-        return this is AdminsChatHandler && update.message?.chatId?.toString() == telegramConfiguration.adminsChatId.trim()
+    fun checkAdminsChat(update: Update, botUsername: String, telegramProperties: TelegramProperties): Boolean {
+        return this is AdminsChatHandler && update.message?.chatId?.toString() == telegramProperties.adminsChatId.trim()
     }
 
     fun checkCollectionReceiptsChat(
         update: Update,
         botUsername: String,
-        telegramConfiguration: TelegramConfiguration,
+        telegramProperties: TelegramProperties,
     ): Boolean {
-        return this is AdminsChatHandler && update.message?.chatId?.toString() == telegramConfiguration.collectingReceiptsChatId.trim()
+        return this is AdminsChatHandler && update.message?.chatId?.toString() == telegramProperties.collectingReceiptsChatId.trim()
     }
 
-    fun checkCallbackQuery(update: Update, botUsername: String, telegramConfiguration: TelegramConfiguration): Boolean {
+    fun checkCallbackQuery(update: Update, botUsername: String, telegramProperties: TelegramProperties): Boolean {
         return this is CallbackQueryHandler && update.hasCallbackQuery()
     }
 

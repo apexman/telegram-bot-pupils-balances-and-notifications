@@ -6,7 +6,9 @@ import org.telegram.telegrambots.meta.api.objects.Update
 
 /**
  * Хендлер доступн из приватного чата
- * Главное отличие - сообщение находится в update.callbackQuery.message
+ * Отличия от других типв хендлеров:
+ * - сообщение находится в update.callbackQuery.message
+ * - отправить оригинальног сообщения в update.callbackQuery.from
  */
 @Order(value = Ordered.HIGHEST_PRECEDENCE + 100)
 interface CallbackQueryHandler {

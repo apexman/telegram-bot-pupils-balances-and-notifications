@@ -6,6 +6,6 @@ import ru.apexman.botpupilsbalances.entity.user.Student
 
 interface PendingBalancePaymentRepository : JpaRepository<PendingBalancePayment, Long> {
 
-    fun findFirstByStudentAndApprovedAtIsNotNullOrderByCreatedAtDesc(student: Student): PendingBalancePayment?
+    fun findFirstByStudentAndApprovedAtIsNullOrderByCreatedAtDesc(student: Student): PendingBalancePayment?
 
 }

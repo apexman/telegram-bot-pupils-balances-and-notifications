@@ -25,6 +25,11 @@ google-sheets:
   main-table-name: main
   pull-table-name: pull
 
+#crons
+scheduled:
+  overdue-informing: ""
+  balance-calculation: ""
+
 logging:
   level:
     ru.apexman: TRACE

@@ -1,5 +1,6 @@
 package ru.apexman.botpupilsbalances.entity.user
 
+import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.OneToMany
@@ -38,17 +39,17 @@ class Student(
     @Column(name = "alarm")
     var isAlarm: Boolean,
     var penalty: BigDecimal,
-    @OneToMany(mappedBy = "student")
+    @OneToMany(mappedBy = "student", cascade = [CascadeType.REMOVE])
     val contacts: MutableCollection<Contact> = mutableListOf(),
-    @OneToMany(mappedBy = "student")
+    @OneToMany(mappedBy = "student", cascade = [CascadeType.REMOVE])
     val balances: MutableCollection<BalancePayment> = mutableListOf(),
-    @OneToMany(mappedBy = "student")
+    @OneToMany(mappedBy = "student", cascade = [CascadeType.REMOVE])
     val comments: MutableCollection<Comment> = mutableListOf(),
-    @OneToMany(mappedBy = "student")
+    @OneToMany(mappedBy = "student", cascade = [CascadeType.REMOVE])
     val alarmDetails: MutableCollection<AlarmDetails> = mutableListOf(),
-    @OneToMany(mappedBy = "student")
+    @OneToMany(mappedBy = "student", cascade = [CascadeType.REMOVE])
     val pendingBalancePayments: MutableCollection<PendingBalancePayment> = mutableListOf(),
-    @OneToMany(mappedBy = "student")
+    @OneToMany(mappedBy = "student", cascade = [CascadeType.REMOVE])
     val penalties: MutableCollection<Penalty> = mutableListOf(),
 ) : AbstractEntityWithLongKey() {
 

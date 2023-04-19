@@ -19,16 +19,16 @@ import org.telegram.telegrambots.session.TelegramLongPollingSessionBot
 import ru.apexman.botpupilsbalances.service.bot.telegramhandlers.CallbackQueryHandler
 import ru.apexman.botpupilsbalances.service.bot.telegramhandlers.PendingBalancePaymentHandler
 import ru.apexman.botpupilsbalances.service.bot.telegramhandlers.TelegramMessageHandler
-import ru.apexman.botpupilsbalances.service.notification.TelegramConfiguration
+import ru.apexman.botpupilsbalances.service.notification.TelegramProperties
 import ru.apexman.botpupilsbalances.service.notification.TelegramNotificationService
 import java.util.*
 
 @Component
 class ThisTelegramBot(
-    private val telegramConfiguration: TelegramConfiguration,
+    private val telegramProperties: TelegramProperties,
     private val handlers: List<TelegramMessageHandler>,
     private val telegramNotificationService: TelegramNotificationService,
-) : TelegramLongPollingSessionBot(DefaultChatIdConverter(), withBotOptions(), telegramConfiguration.token) {
+) : TelegramLongPollingSessionBot(DefaultChatIdConverter(), withBotOptions(), telegramProperties.token) {
     private val logger = LoggerFactory.getLogger(ThisTelegramBot::class.java)
     private var botUser: User? = null
 
@@ -59,7 +59,7 @@ class ThisTelegramBot(
                 return
             }
             for (handler in handlers) {
-                if (handler.canHandle(update, botSession, botUsername, telegramConfiguration)) {
+                if (handler.canHandle(update, botSession, botUsername, telegramProperties)) {
                     //todo: implement async
                     val apiMethods = handler.handle(update, botSession)
                     for (apiMethod in apiMethods) {

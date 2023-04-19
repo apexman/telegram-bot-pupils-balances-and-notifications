@@ -48,7 +48,7 @@ class ProfileHandler(
                     .build()
             ))
         val hasPendingBalancePayments =
-            pendingBalancePaymentRepository.findFirstByStudentAndApprovedAtIsNotNullOrderByCreatedAtDesc(student) != null
+            pendingBalancePaymentRepository.findFirstByStudentAndApprovedAtIsNullOrderByCreatedAtDesc(student) != null
         val lastComment = commentRepository.findFirstByStudentOrderByCreatedAtDesc(student)?.comment ?: ""
         val lastAlarmDetails =
             alarmDetailsRepository.findFirstByStudentOrderByCreatedAtDesc(student)
@@ -60,7 +60,7 @@ class ProfileHandler(
             .filter { it.contactType == ContactType.CHILD_ID.name }
             .joinToString(", ") { it.contactValue }
         val text = """
-            Id: ${student.googleId}
+            ID: ${student.googleId}
             Public ID: ${student.publicId}
             Имя: ${student.fullUserName}
             Дата рождения: ${Parsers.LOCAL_DATE_TO_STRING(student.birthday)}
@@ -78,8 +78,8 @@ class ProfileHandler(
             Последний комментарий: $lastComment
             Последний alarm_details: ${lastAlarmDetails?.details ?: ""}
             Контакты:
-              Tg id родителя: $parentTgIds
-              Tg id ученика: $childTgIds
+            Tg id родителя: $parentTgIds
+            Tg id ученика: $childTgIds
         """.trimIndent()
 
         return listOf(

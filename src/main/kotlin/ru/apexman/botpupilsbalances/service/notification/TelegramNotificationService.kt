@@ -21,7 +21,7 @@ import java.nio.charset.StandardCharsets.UTF_8
 
 @Service
 class TelegramNotificationService(
-    private val telegramConfiguration: TelegramConfiguration,
+    private val telegramProperties: TelegramProperties,
     private val telegramWebClient: WebClient,
 ) {
     private val logger = LoggerFactory.getLogger(TelegramNotificationService::class.java)
@@ -43,8 +43,8 @@ class TelegramNotificationService(
     fun sendMonitoring(woPrefixText: String, document: TelegramDocumentDto? = null) {
         val text = "‼️ $woPrefixText"
         try {
-            if (telegramConfiguration.isMonitoring) {
-                sendMessage(telegramConfiguration.monitoringChatId, text, document)
+            if (telegramProperties.isMonitoring) {
+                sendMessage(telegramProperties.monitoringChatId, text, document)
             } else {
                 logger.info("Monitoring disabled, text: $text")
             }
@@ -76,7 +76,7 @@ class TelegramNotificationService(
                     .path("/bot{httpToken}/{method}")
                     .queryParam("text", URLEncoder.encode(messageText, UTF_8))
                     .queryParam("chat_id", chatId)
-                it.build(telegramConfiguration.token, "sendMessage")
+                it.build(telegramProperties.token, "sendMessage")
             }.retrieve()
             .onStatus(
                 HttpStatus.BAD_REQUEST::equals
@@ -98,7 +98,7 @@ class TelegramNotificationService(
                     .path("/bot{httpToken}/{method}")
                     .queryParam("caption", URLEncoder.encode(messageText, UTF_8))
                     .queryParam("chat_id", chatId)
-                it.build(telegramConfiguration.token, "sendDocument")
+                it.build(telegramProperties.token, "sendDocument")
             }
             .contentType(MediaType.MULTIPART_FORM_DATA)
             .body(BodyInserters.fromMultipartData(multipartBodyBuilder.build())).retrieve()

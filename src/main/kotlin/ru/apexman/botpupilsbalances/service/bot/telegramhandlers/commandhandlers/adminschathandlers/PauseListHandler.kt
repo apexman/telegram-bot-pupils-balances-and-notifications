@@ -13,7 +13,7 @@ import ru.apexman.botpupilsbalances.repository.StudentRepository
 import ru.apexman.botpupilsbalances.service.bot.telegramhandlers.AdminsChatHandler
 import ru.apexman.botpupilsbalances.service.bot.telegramhandlers.TelegramMessageHandler
 import ru.apexman.botpupilsbalances.service.bot.telegramhandlers.commandhandlers.oncallbackhandlers.AlarmEnablingHandler
-import ru.apexman.botpupilsbalances.service.bot.telegramhandlers.commandhandlers.oncallbackhandlers.PauseDisablingHandler
+import ru.apexman.botpupilsbalances.service.bot.telegramhandlers.commandhandlers.oncallbackhandlers.PauseChangingHandler
 import java.io.Serializable
 
 /**
@@ -22,7 +22,7 @@ import java.io.Serializable
 @Component
 class PauseListHandler(
     private val studentRepository: StudentRepository,
-    private val pauseDisablingHandler: PauseDisablingHandler,
+    private val pauseChangingHandler: PauseChangingHandler,
     private val alarmEnablingHandler: AlarmEnablingHandler,
 ): TelegramMessageHandler, AdminsChatHandler {
 
@@ -55,7 +55,7 @@ class PauseListHandler(
     private fun buildInlineKeyboardMarkup(student: Student): InlineKeyboardMarkup {
         val continueButton = InlineKeyboardButton.builder()
             .text("Continue")
-            .callbackData("${pauseDisablingHandler.getCommandName()} ${student.googleId}")
+            .callbackData("${pauseChangingHandler.getCommandName()} ${student.googleId} false")
             .build()
         val alarmSetButton = InlineKeyboardButton.builder()
             .text("Alarm")

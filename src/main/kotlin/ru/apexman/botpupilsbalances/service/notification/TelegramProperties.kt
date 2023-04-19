@@ -3,7 +3,7 @@ package ru.apexman.botpupilsbalances.service.notification
 import org.springframework.boot.context.properties.ConfigurationProperties
 
 @ConfigurationProperties(prefix = "telegram")
-data class TelegramConfiguration(
+data class TelegramProperties(
     val telegramApiUrl: String,
     val token: String,
     val isMonitoring: Boolean,

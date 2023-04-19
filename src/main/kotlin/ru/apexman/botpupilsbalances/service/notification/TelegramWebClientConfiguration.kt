@@ -13,12 +13,12 @@ class TelegramWebClientConfiguration {
     private val logger = LoggerFactory.getLogger(TelegramWebClientConfiguration::class.java)
 
     @Bean
-    fun telegramWebClient(telegramConfiguration: TelegramConfiguration): WebClient {
-        val factory = DefaultUriBuilderFactory(telegramConfiguration.telegramApiUrl)
+    fun telegramWebClient(telegramProperties: TelegramProperties): WebClient {
+        val factory = DefaultUriBuilderFactory(telegramProperties.telegramApiUrl)
         factory.encodingMode = DefaultUriBuilderFactory.EncodingMode.NONE
         return WebClient
             .builder()
-            .baseUrl(telegramConfiguration.telegramApiUrl)
+            .baseUrl(telegramProperties.telegramApiUrl)
             .uriBuilderFactory(factory)
             .filters { exchangeFilterFunctions ->
                 exchangeFilterFunctions.add(requestLog())
