@@ -38,15 +38,6 @@ class StudentService(
 ) {
     private val logger = LoggerFactory.getLogger(StudentService::class.java)
 
-    //TODO: remove
-    @PostConstruct
-    fun test() {
-        val students = studentRepository.findAll()
-        println(students)
-        val googleMainPageRows = students.map { toGoogleMainPageRowRequest(it) }
-        println(googleMainPageRows)
-    }
-
     fun toGoogleMainPageRowRequest(student: Student): GoogleMainPageRowRequest {
         val alarmDetails = alarmDetailsRepository.findFirstByStudentOrderByCreatedAtDesc(student)
         val alarmDetailsComment = if (alarmDetails?.disabledAt != null) null else alarmDetails?.details
