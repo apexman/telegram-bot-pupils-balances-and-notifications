@@ -11,6 +11,14 @@ spring:
         default_schema: telegram_bot_payments_informing_schema
   flyway:
     default-schema: telegram_bot_payments_informing_schema
+  #TODO: вся информация о запланированных джобах теряется, когда приложение не работает
+  quartz:
+    job-store-type: memory
+    properties:
+      org:
+        quartz:
+          jobStore:
+            class: "org.quartz.simpl.RAMJobStore"
 
 telegram:
   telegram-api-url: https://api.telegram.org
@@ -24,6 +32,15 @@ google-sheets:
   sheet-id: ${GOOGLE_SHEET_ID}
   main-table-name: main
   pull-table-name: pull
+
+#schedules
+scheduled:
+  #  user-time-zone: UTC
+  user-time-zone: Europe/Moscow
+  #hh::MM in user-time-zone
+  inform-overdue-start-time: "23:57"
+  inform-overdue-interval-minutes: 1
+#  balance-calculation: ""
 
 logging:
   level:
