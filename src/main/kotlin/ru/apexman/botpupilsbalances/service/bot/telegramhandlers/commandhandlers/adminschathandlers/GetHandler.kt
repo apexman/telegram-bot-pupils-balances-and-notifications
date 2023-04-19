@@ -69,7 +69,7 @@ class GetHandler(
     }
 
     fun buildTextWithOverdueBalances(): Collection<Pair<Student, String>> {
-        return studentRepository.findAllByIsPauseIsFalseAndBalanceLessThanEqual()
+        return studentRepository.findAllByIsPauseIsFalseAndBalanceLessThanEqualWithContacts()
             .sortedBy { it.fullUserName }
             .map {
                 val balanceText =

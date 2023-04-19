@@ -40,7 +40,8 @@ scheduled:
   #hh::MM in user-time-zone
   inform-overdue-start-time: "23:57"
   inform-overdue-interval-minutes: 1
-#  balance-calculation: ""
+  balance_decreaser-start-time: "23:58"
+  balance_decreaser-interval-minutes: 1
 
 logging:
   level:

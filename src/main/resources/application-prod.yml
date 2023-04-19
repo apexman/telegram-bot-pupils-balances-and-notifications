@@ -35,12 +35,11 @@ google-sheets:
 
 #schedules
 scheduled:
-  #  user-time-zone: UTC
-  user-time-zone: Europe/Moscow
-  #hh::MM in user-time-zone
-  inform-overdue-start-time: "23:57"
-  inform-overdue-interval-minutes: 1
-#  balance-calculation: ""
+  user-time-zone: ${USER_TIME_ZONE}
+  inform-overdue-start-time: ${INFORM_OVERDUE_START_TIME}
+  inform-overdue-interval-minutes: ${INFORM_OVERDUE_INTERVAL_MINUTES}
+  balance_decreaser-start-time: ${BALANCE_DECREASER_START_TIME}
+  balance_decreaser-interval-minutes: ${BALANCE_DECREASER_INTERVAL_MINUTES}
 
 logging:
   level:

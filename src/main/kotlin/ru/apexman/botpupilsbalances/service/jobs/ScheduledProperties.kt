@@ -9,4 +9,6 @@ data class ScheduledProperties(
     val userTimeZone: TimeZone,
     val informOverdueStartTime: LocalTime,
     val informOverdueIntervalMinutes: Int,
+    val balanceDecreaserStartTime: LocalTime,
+    val balanceDecreaserIntervalMinutes: Int,
 )

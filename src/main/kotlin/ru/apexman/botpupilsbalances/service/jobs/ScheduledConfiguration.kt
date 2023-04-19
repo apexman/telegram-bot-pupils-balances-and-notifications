@@ -39,6 +39,31 @@ class ScheduledConfiguration {
         return scheduler
     }
 
+    @Bean
+    fun balanceDecreaserScheduler(factory: SchedulerFactoryBean, scheduledProperties: ScheduledProperties): Scheduler {
+        val job = JobBuilder.newJob().ofType(BalanceDecreaserJobService::class.java)
+            .storeDurably()
+            .withIdentity("qrtz_balance_decreaser_job_detail")
+            .withDescription("Decrease students' balances who not paused")
+            .build()
+        val triggerDate: Date = parseLocalTime(scheduledProperties.balanceDecreaserStartTime, scheduledProperties.userTimeZone)
+        val trigger = TriggerBuilder.newTrigger().forJob(job)
+            .withIdentity("qrtz_balance_decreaser_trigger")
+            .withDescription("Trigger to decrease students' balances who not paused")
+            .startAt(triggerDate)
+            .withSchedule(
+                simpleSchedule()
+                    .repeatForever()
+                    .withIntervalInMinutes(scheduledProperties.balanceDecreaserIntervalMinutes)
+            )
+            .build()
+
+        val scheduler: Scheduler = factory.scheduler
+        scheduler.scheduleJob(job, trigger)
+        scheduler.start()
+        return scheduler
+    }
+
     private fun parseLocalTime(informOverdueStartTime: LocalTime, userTimeZone: TimeZone): Date {
         val instant: Instant = informOverdueStartTime
             .atDate(LocalDate.now(userTimeZone.toZoneId()).minusDays(1))
