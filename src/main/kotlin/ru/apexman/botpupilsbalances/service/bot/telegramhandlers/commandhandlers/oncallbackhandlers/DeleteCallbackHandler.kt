@@ -20,6 +20,10 @@ import ru.apexman.botpupilsbalances.service.bot.telegramhandlers.CallbackQueryHa
 import ru.apexman.botpupilsbalances.service.bot.telegramhandlers.TelegramMessageHandler
 import java.io.Serializable
 
+/**
+ * Удаляет ученика из базы и оповещает, ученику и родителю отправляется прощальная открытка: Картинка + текст
+ * Перед удалением запрашивается подтверждение
+ */
 @Service
 class DeleteCallbackHandler(
     private val paymentService: PaymentService,

@@ -75,7 +75,7 @@ class ThisTelegramBot(
                     return
                 }
             }
-            //TODO: can talk in not private chat?
+            //TODO: can talk in non private chat?
             if (update.message?.chat?.isUserChat == true) {
                 val message = SendMessage.builder()
                     .chatId(update.message.chatId)

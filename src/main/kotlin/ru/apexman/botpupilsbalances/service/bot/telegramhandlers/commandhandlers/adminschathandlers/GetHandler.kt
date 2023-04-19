@@ -25,6 +25,9 @@ import java.io.Serializable
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 
+/**
+ * Присылает список учеников с информацией о предстоящем платеже
+ */
 @Component
 class GetHandler(
     private val telegramProperties: TelegramProperties,
@@ -37,7 +40,7 @@ class GetHandler(
 ) : TelegramMessageHandler, AdminsChatHandler {
 
     override fun getBotCommand(): BotCommand? {
-        return BotCommand("/get", "Get some get")
+        return BotCommand("/get", "Присылает список учеников с информацией о предстоящем платеже")
     }
 
     override fun handle(update: Update, botSession: Session?): List<PartialBotApiMethod<out Serializable>> {

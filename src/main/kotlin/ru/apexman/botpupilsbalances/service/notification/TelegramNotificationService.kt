@@ -1,5 +1,8 @@
 package ru.apexman.botpupilsbalances.service.notification
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import jakarta.annotation.PostConstruct
 import jakarta.annotation.PreDestroy
 import org.apache.shiro.session.Session
@@ -23,6 +26,7 @@ import java.nio.charset.StandardCharsets.UTF_8
 class TelegramNotificationService(
     private val telegramProperties: TelegramProperties,
     private val telegramWebClient: WebClient,
+    private val mapper: ObjectMapper,
 ) {
     private val logger = LoggerFactory.getLogger(TelegramNotificationService::class.java)
 
@@ -110,14 +114,22 @@ class TelegramNotificationService(
     }
 
     companion object {
-        fun buildTelegramDocumentDto(exception: Throwable, update: Update? = null, botSession: Session? = null): TelegramDocumentDto {
-            val updateString = if (update != null) "$update\n\n--------\n\n" else ""
-            val botSessionString = if (botSession != null) "$botSession\n\n--------\n\n" else ""
+        fun buildTelegramDocumentDto(
+            exception: Throwable,
+            update: Update? = null,
+            botSession: Session? = null,
+        ): TelegramDocumentDto {
+            val mapper = jacksonObjectMapper().registerModule(JavaTimeModule())
+            val updateString = if (update != null) "Update:\n${mapper.writeValueAsString(update)}\n\n--------\n\n" else ""
+            val botSessionString = if (botSession != null) "BotSession:\n${mapper.writeValueAsString(botSession)}\n\n--------\n\n" else ""
             val stringWriter = StringWriter()
             val printWriter = PrintWriter(stringWriter)
             exception.printStackTrace(printWriter)
             printWriter.close()
-            return TelegramDocumentDto(name = "exception.log", content = updateString + botSessionString + stringWriter.toString())
+            return TelegramDocumentDto(
+                name = "exception.log",
+                content = updateString + botSessionString + stringWriter.toString()
+            )
         }
     }
 
