@@ -73,6 +73,12 @@ class DeleteForceCallbackHandler(
                 AnswerCallbackQuery.builder()
                     .callbackQueryId(update.callbackQuery.id)
                     .text("Ученик удален")
+                    .showAlert(true)
+                    .build(),
+                SendMessage.builder()
+                    .chatId(telegramProperties.adminsChatId)
+                    .replyToMessageId(message.messageId)
+                    .text("Ученик удален")
                     .build()
             )
             val studentGoodbyeMessage = buildStudentGoodbyeMessage(childTgChatIds, message)

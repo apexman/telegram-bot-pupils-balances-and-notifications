@@ -3,7 +3,6 @@ package ru.apexman.botpupilsbalances.service.bot.telegramhandlers.commandhandler
 import org.apache.shiro.session.Session
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
@@ -13,9 +12,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMa
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton
 import ru.apexman.botpupilsbalances.entity.user.Student
-import ru.apexman.botpupilsbalances.repository.PendingBalancePaymentRepository
 import ru.apexman.botpupilsbalances.repository.StudentRepository
-import ru.apexman.botpupilsbalances.service.PaymentService
 import ru.apexman.botpupilsbalances.service.bot.telegramhandlers.CallbackQueryHandler
 import ru.apexman.botpupilsbalances.service.bot.telegramhandlers.TelegramMessageHandler
 import java.io.Serializable
@@ -26,9 +23,7 @@ import java.io.Serializable
  */
 @Service
 class DeleteCallbackHandler(
-    private val paymentService: PaymentService,
     private val studentRepository: StudentRepository,
-    private val pendingBalancePaymentRepository: PendingBalancePaymentRepository,
     private val deleteForceCallbackHandler: DeleteForceCallbackHandler,
 ) : TelegramMessageHandler, CallbackQueryHandler {
     private val logger = LoggerFactory.getLogger(DeleteCallbackHandler::class.java)
@@ -41,7 +36,6 @@ class DeleteCallbackHandler(
         return "/delete_student"
     }
 
-    @Transactional
     override fun handle(update: Update, botSession: Session?): List<PartialBotApiMethod<out Serializable>> {
         val args = parseArgs(update)
         val googleId = args[0]
