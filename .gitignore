@@ -44,3 +44,4 @@ out/
 t.json
 t.txt
 google-sa-credentials-local.json
+application-private.yml

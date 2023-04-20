@@ -35,7 +35,9 @@ google-sheets:
 
 #schedules
 scheduled:
+  #user-time-zone: example UTC
   user-time-zone: ${USER_TIME_ZONE}
+  #hh::MM in user-time-zone, example 23:57
   inform-overdue-start-time: ${INFORM_OVERDUE_START_TIME}
   inform-overdue-interval-minutes: ${INFORM_OVERDUE_INTERVAL_MINUTES}
   balance_decreaser-start-time: ${BALANCE_DECREASER_START_TIME}
