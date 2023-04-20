@@ -1,4 +1,5 @@
 FROM openjdk:17
+RUN echo 'alias ll="ls -Ghl"' >> ~/.bashrc
 COPY . /app
 WORKDIR /app
 RUN chmod +x ./gradlew
