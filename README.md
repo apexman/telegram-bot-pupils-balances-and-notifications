@@ -1,0 +1,35 @@
+### Another telegram bot
+#### ENVs
+
+- PORT 
+  - application's port (9090)
+- ENV_NAME 
+  - applications profile ("prod")
+- DB_URL 
+  - jdbc url to db ("jdbc:postgresql://localhost:5432/db")
+- DB_USERNAME 
+  - db username ("postgres")
+- DB_PASSWORD 
+  - db username's password ("postgres")
+- ADMINS_CHAT_ID 
+  - admins' tg chat id (-123)
+- COLLECTING_RECEIPTS_CHAT_ID 
+  - managers' tg chat id (-123)
+- IS_MONITORING 
+  - is sending monitoring messages (like exceptions) to admins? ("true")
+- MONITORING_CHAT_ID 
+  - admins' tg chat id (-123)
+- TOKEN 
+  - tg bot token ("123123123:sfasdfasdf-fdsfasdfasdf")
+- GOOGLE_SHEET_ID 
+  - googles sheets id ("123123123:sfasdfasdf-fdsfasdfasdf")
+- USER_TIME_ZONE 
+  - user's timezone ("Europe/Moscow")
+- INFORM_OVERDUE_START_TIME 
+  - start time for schedule, which will send notifications about overdue payments ("23:57")
+- INFORM_OVERDUE_INTERVAL_MINUTES
+  - interval in minutes
+- BALANCE_DECREASER_START_TIME
+  - start time for schedule, which will decrease balances ("23:57")
+- BALANCE_DECREASER_INTERVAL_MINUTES
+  - interval in minutes
